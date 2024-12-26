@@ -1,4 +1,5 @@
-use ponjika::{Date, EnglishMonths};
+use ponjika::{get_today_bengali_calendar, BengaliDate, BengaliDays, BengaliMonths};
 fn main(){
-    let date = Date::new(1, EnglishMonths::January, 2021);
+    let today = get_today_bengali_calendar();
+    println!("Today is: {} {} {} {}", today.day, today.week_day.as_str(), today.month.as_str(), today.year);
 }
