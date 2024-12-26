@@ -1,7 +1,9 @@
 mod calendar;
 use chrono::prelude::*;
 
-pub use calendar::{BengaliDays, BengaliMonths, EnglishDays, EnglishMonths, EnglishDate, BengaliDate};
+pub use calendar::{
+    BengaliDate, BengaliDays, BengaliMonths, EnglishDate, EnglishDays, EnglishMonths,
+};
 
 fn gregorian_to_bengali_date(english_date: EnglishDate) -> BengaliDate {
     let bengali_year: u16 =
@@ -21,13 +23,12 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> BengaliDate {
         10 => (7, english_date.day + 15),                          // Kartik
         11 => (8, english_date.day + 14),                          // Agrahayan
         12 => (9, english_date.day + 14),                          // Poush
-        1 => (10, english_date.day + 15),                           // Magh
+        1 => (10, english_date.day + 15),                          // Magh
         2 => (11, english_date.day + 13),                          // Falgun
         3 => (12, english_date.day + 14),                          // Chaitra
         _ => (0, 0),
     };
 
-    println!("Bengali date: {} {}", bengali_month.0, bengali_month.1);
     let (month_index, adjusted_day) = bengali_month;
     let bengali_day = if adjusted_day > 30 {
         adjusted_day - 30
@@ -59,7 +60,13 @@ pub fn get_today_bengali_calendar() -> BengaliDate {
         Weekday::Sun => EnglishDays::Sunday,
     };
 
-    println!("Today is: {} ({}) {}, {}", today_day, today_week_day.as_str(), EnglishMonths::from_index(today_month).as_str(), today_year);
+    println!(
+        "Today is: {} ({}) {}, {}",
+        today_day,
+        today_week_day.as_str(),
+        EnglishMonths::from_index(today_month).as_str(),
+        today_year
+    );
 
     let english_date = EnglishDate {
         day: today_day,
