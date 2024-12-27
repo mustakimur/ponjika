@@ -5,7 +5,7 @@ mod months;
 mod season;
 
 pub use calendar::*;
-use chrono::prelude::{Datelike, Local, Weekday};
+use chrono::prelude::{Datelike, Local};
 pub use date::*;
 pub use days::*;
 pub use months::*;
