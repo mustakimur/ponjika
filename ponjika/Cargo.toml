@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 description = "Ponjika is a Bangla date time library for Rust."
 license = "GPL-3.0"
+repository = "https://github.com/mustakimur/ponjika"
+documentation = "https://docs.rs/ponjika"
 
 [dependencies]
 chrono = "0.4"
