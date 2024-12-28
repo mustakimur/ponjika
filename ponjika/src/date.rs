@@ -183,6 +183,7 @@ impl EnglishDate {
     }
 }
 
+#[derive(Debug)]
 pub struct BengaliDate {
     day: u8,
     week_day: BengaliWeekDays,

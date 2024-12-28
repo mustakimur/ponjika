@@ -1,3 +1,5 @@
+/// The enum `Month` is used to represent both English and Bengali months.
+/// The invalid variant is used when the month is invalid.
 #[derive(Debug)]
 pub enum Month {
     English(EnglishMonths),
@@ -6,6 +8,21 @@ pub enum Month {
 }
 
 impl Month {
+    /// Get the month name of the selected month
+    /// # Returns
+    /// * `&str` - The name of the month
+    /// # Example
+    /// ```
+    /// use ponjika::months::{Month, EnglishMonths, BengaliMonths};
+    /// let month = Month::English(EnglishMonths::January);
+    /// assert_eq!(month.get_name(), "January");
+    /// let month = Month::Bengali(BengaliMonths::Baishakh);
+    /// assert_eq!(month.get_name(), "বৈশাখ");
+    /// ```
+    /// # Note
+    /// * The function will return the name of the month
+    /// * The function will return "MonthError: The month in the date was wrong" if the month is invalid
+    ///
     pub fn get_name(&self) -> &str {
         match self {
             Month::English(month) => month.get_name(),
@@ -15,6 +32,8 @@ impl Month {
     }
 }
 
+/// The enum `EnglishMonths` is used to represent the English months.
+/// The enum variants are the English months.
 #[derive(Debug)]
 pub enum EnglishMonths {
     January,
@@ -32,6 +51,24 @@ pub enum EnglishMonths {
 }
 
 impl EnglishMonths {
+    /// Get the enum `EnglishMonths` variant of the selected month
+    /// # Arguments
+    /// * `month` - u8
+    /// # Returns
+    /// * `Month` - The EnglishMonth enum variant of the selected month
+    /// # Example
+    /// ```
+    /// use ponjika::months::{Month, EnglishMonths};
+    /// let month = EnglishMonths::get_month(1);
+    /// match month {
+    ///     Month::English(month) => println!("The month is {:?}", month),
+    ///     Month::Bengali(_) => println!("The month is Bengali"),
+    ///     _ => println!("The month is invalid"),
+    /// }
+    /// ```
+    /// # Note
+    /// * The function will return the `EnglishMonth` enum variant of the selected month
+    /// * The function will return `Month::Invalid` if the month is invalid
     pub fn get_month(month: u8) -> Month {
         match month {
             1 => Month::English(EnglishMonths::January),
@@ -50,7 +87,7 @@ impl EnglishMonths {
         }
     }
 
-    pub fn get_name(&self) -> &str {
+    fn get_name(&self) -> &str {
         match self {
             EnglishMonths::January => "January",
             EnglishMonths::February => "February",
@@ -68,6 +105,8 @@ impl EnglishMonths {
     }
 }
 
+/// The enum `BengaliMonths` is used to represent the Bengali months.
+/// The enum variants are the Bengali months.
 #[derive(Debug)]
 pub enum BengaliMonths {
     Baishakh,
@@ -85,6 +124,24 @@ pub enum BengaliMonths {
 }
 
 impl BengaliMonths {
+    /// Get the enum `BengaliMonths` variant of the selected month
+    /// # Arguments
+    /// * `month` - u8
+    /// # Returns
+    /// * `Month` - The BengaliMonth enum variant of the selected month
+    /// # Example
+    /// ```
+    /// use ponjika::months::{Month, BengaliMonths};
+    /// let month = BengaliMonths::get_month(1);
+    /// match month {
+    ///    Month::English(_) => println!("The month is English"),
+    ///   Month::Bengali(month) => println!("The month is {:?}", month),
+    ///    _ => println!("The month is invalid"),
+    /// }
+    /// ```
+    /// # Note
+    /// * The function will return the `BengaliMonth` enum variant of the selected month
+    /// * The function will return `Month::Invalid` if the month is invalid
     pub fn get_month(month: u8) -> Month {
         match month {
             1 => Month::Bengali(BengaliMonths::Baishakh),
@@ -103,7 +160,7 @@ impl BengaliMonths {
         }
     }
 
-    pub fn get_name(&self) -> &str {
+    fn get_name(&self) -> &str {
         match self {
             BengaliMonths::Baishakh => "বৈশাখ",
             BengaliMonths::Jestha => "জ্যেষ্ঠ",

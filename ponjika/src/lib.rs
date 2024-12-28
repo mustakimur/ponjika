@@ -1,7 +1,7 @@
 mod calendar;
 mod date;
-mod days;
-mod months;
+pub mod days;
+pub mod months;
 mod season;
 
 pub use calendar::*;
@@ -138,6 +138,18 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
     )
 }
 
+/// Get today's Bengali date
+/// # Returns
+/// * `Date` - Bengali date
+/// # Example
+/// ```
+/// use ponjika::get_today_bengali_calendar;
+/// let bengali_date = get_today_bengali_calendar();
+/// println!("{:?}", bengali_date.get_bengali_date().unwrap());
+/// ```
+/// # Note
+/// * The function will return `Date::Invalid` if the current date is invalid
+/// * The function will return the Bengali date of the current date if the date is valid
 pub fn get_today_bengali_calendar() -> Date {
     let today = Local::now();
     let today_day = today.day() as u8;
@@ -156,7 +168,23 @@ pub fn get_today_bengali_calendar() -> Date {
     }
 }
 
-pub fn get_bengali_date(day: u8, month: u8, year: u16) -> Date {
+/// Get Bengali date from Gregorian date
+/// # Arguments
+/// * `day` - u8
+/// * `month` - u8
+/// * `year` - u16
+/// # Returns
+/// * `Date` - Bengali date
+/// # Example
+/// ```
+/// use ponjika::get_bengali_date_from_gregorian;
+/// let bengali_date = get_bengali_date_from_gregorian(14, 4, 2021);
+/// println!("{:?}", bengali_date.get_bengali_date().unwrap());
+/// ```
+/// # Note
+/// * The function will return `Date::Invalid` if the gregorian date is invalid
+/// * The function will return the Bengali date if the date is valid
+pub fn get_bengali_date_from_gregorian(day: u8, month: u8, year: u16) -> Date {
     let english_date = EnglishDate::create_date(day, month, year).get_english_date();
 
     match english_date {
