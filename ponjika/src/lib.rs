@@ -1,4 +1,4 @@
-mod calendar;
+pub mod calendar;
 pub mod date;
 pub mod days;
 pub mod months;

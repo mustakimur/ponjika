@@ -8,13 +8,7 @@ fn main() {
             return;
         }
         _ => {
-            println!(
-                "Date is: {1}, {0} {2} {3}",
-                date.get_day(),
-                date.get_week_day(),
-                date.get_month(),
-                date.get_year()
-            );
+            println!("{}", format_bengali_date(date));
         }
     }
 }

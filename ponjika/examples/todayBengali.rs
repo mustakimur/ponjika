@@ -7,13 +7,7 @@ fn main() {
             return;
         }
         _ => {
-            println!(
-                "Today is: {1}, {0} {2} {3}",
-                today.get_day(),
-                today.get_week_day(),
-                today.get_month(),
-                today.get_year()
-            );
+            println!("{}", format_bengali_date_with_weekday(today));
         }
     }
 }
