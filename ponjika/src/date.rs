@@ -5,7 +5,7 @@
 
 use chrono::{Datelike, TimeZone, Utc, Weekday};
 
-use crate::days::{BengaliWeekDays, EnglishWeekDays};
+use crate::days::{WeekDays, BengaliWeekDays, EnglishWeekDays};
 use crate::months::{BengaliMonths, EnglishMonths, Month};
 
 /// The enum `Date` is used to represent both English and Bengali dates.
@@ -17,10 +17,6 @@ pub enum Date {
 }
 
 impl Date {
-    pub fn get_date(self) -> Date {
-        self
-    }
-    
     /// Get the English date from the selected date
     /// # Returns
     /// * `Option<EnglishDate>` - The English date
@@ -144,7 +140,7 @@ impl Date {
 #[derive(Debug)]
 pub struct EnglishDate {
     day: u8,
-    week_day: EnglishWeekDays,
+    week_day: WeekDays,
     month: u8,
     month_name: Month,
     year: u16,
@@ -217,13 +213,13 @@ impl EnglishDate {
                     .with_ymd_and_hms(year as i32, month as u32, day as u32, 0, 0, 0)
                     .unwrap();
                 match date.weekday() {
-                    Weekday::Mon => EnglishWeekDays::Monday,
-                    Weekday::Tue => EnglishWeekDays::Tuesday,
-                    Weekday::Wed => EnglishWeekDays::Wednesday,
-                    Weekday::Thu => EnglishWeekDays::Thursday,
-                    Weekday::Fri => EnglishWeekDays::Friday,
-                    Weekday::Sat => EnglishWeekDays::Saturday,
-                    Weekday::Sun => EnglishWeekDays::Sunday,
+                    Weekday::Mon => WeekDays::English(EnglishWeekDays::Monday),
+                    Weekday::Tue => WeekDays::English(EnglishWeekDays::Tuesday),
+                    Weekday::Wed => WeekDays::English(EnglishWeekDays::Wednesday),
+                    Weekday::Thu => WeekDays::English(EnglishWeekDays::Thursday),
+                    Weekday::Fri => WeekDays::English(EnglishWeekDays::Friday),
+                    Weekday::Sat => WeekDays::English(EnglishWeekDays::Saturday),
+                    Weekday::Sun => WeekDays::English(EnglishWeekDays::Sunday),
                 }
             }
             _ => return Date::Invalid,
@@ -263,7 +259,7 @@ impl EnglishDate {
     }
 
     pub fn get_week_day(&self) -> String {
-        self.week_day.get_name().to_string()
+        self.week_day.get_week_name().to_string()
     }
 
     pub fn get_month(&self) -> String {
@@ -287,7 +283,7 @@ impl EnglishDate {
 #[derive(Debug)]
 pub struct BengaliDate {
     day: u8,
-    week_day: BengaliWeekDays,
+    week_day: WeekDays,
     month: u8,
     month_name: Month,
     year: u16,
@@ -358,7 +354,7 @@ impl BengaliDate {
 
         Date::Bengali(BengaliDate {
             day,
-            week_day,
+            week_day: WeekDays::Bengali(week_day),
             month,
             month_name: BengaliMonths::get_month(month),
             year,
@@ -392,13 +388,13 @@ impl BengaliDate {
                     .with_ymd_and_hms(year as i32, month as u32, day as u32, 0, 0, 0)
                     .unwrap();
                 match date.weekday() {
-                    Weekday::Mon => BengaliWeekDays::Sombar,
-                    Weekday::Tue => BengaliWeekDays::Mongolbar,
-                    Weekday::Wed => BengaliWeekDays::Budhbar,
-                    Weekday::Thu => BengaliWeekDays::Brihoshpotibar,
-                    Weekday::Fri => BengaliWeekDays::Shukrobar,
-                    Weekday::Sat => BengaliWeekDays::Shonibar,
-                    Weekday::Sun => BengaliWeekDays::Robibar,
+                    Weekday::Mon => WeekDays::Bengali(BengaliWeekDays::Sombar),
+                    Weekday::Tue => WeekDays::Bengali(BengaliWeekDays::Mongolbar),
+                    Weekday::Wed => WeekDays::Bengali(BengaliWeekDays::Budhbar),
+                    Weekday::Thu => WeekDays::Bengali(BengaliWeekDays::Brihoshpotibar),
+                    Weekday::Fri => WeekDays::Bengali(BengaliWeekDays::Shukrobar),
+                    Weekday::Sat => WeekDays::Bengali(BengaliWeekDays::Shonibar),
+                    Weekday::Sun => WeekDays::Bengali(BengaliWeekDays::Robibar),
                 }
             }
             _ => return Date::Invalid,
@@ -456,7 +452,7 @@ impl BengaliDate {
     }
 
     pub fn get_week_day(&self) -> String {
-        self.week_day.get_name().to_string()
+        self.week_day.get_week_name().to_string()
     }
 
     pub fn get_month(&self) -> String {

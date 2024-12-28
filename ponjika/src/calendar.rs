@@ -20,8 +20,7 @@ use crate::date::Date;
 /// * The function will return the formatted date with weekday if the date is valid
 /// * The formatted date with weekday will be in the format: `Weekday, Day Month Year`
 pub fn format_date_with_weekday(date: Date) -> String {
-    let cal_date = date.get_date();
-    match cal_date {
+    match date {
         Date::Bengali(bengali_date) => {
             let bengali_week_day = bengali_date.get_week_day();
             let bengali_month = bengali_date.get_month();
@@ -72,8 +71,7 @@ pub fn format_date_with_weekday(date: Date) -> String {
 /// * The function will return the formatted date if the date is valid
 /// * The formatted date will be in the format: `Day Month Year`
 pub fn format_date(date: Date) -> String {
-    let cal_date = date.get_date();
-    match cal_date {
+    match date {
         Date::Bengali(bengali_date) => {
             let bengali_month = bengali_date.get_month();
             let bengali_day = bengali_date.get_day();
