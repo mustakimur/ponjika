@@ -130,9 +130,11 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
         }
     }
 
+    let bengali_weekday = BengaliWeekDays::map_to_english_weekday(english_date.get_week_day().as_str());
+
     BengaliDate::create_bengali_date(
         bengali_day,
-        BengaliWeekDays::map_to_english_weekday(english_date.get_week_day().as_str()),
+        bengali_weekday.unwrap(),
         bengali_month,
         bengali_year,
     )

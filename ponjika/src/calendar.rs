@@ -29,12 +29,9 @@ pub fn format_date_with_weekday(date: Date) -> String {
 
             format!(
                 "{}, {} {} {}",
-                bengali_week_day,
-                bengali_day,
-                bengali_month,
-                bengali_year
+                bengali_week_day, bengali_day, bengali_month, bengali_year
             )
-        },
+        }
         Date::English(english_date) => {
             let english_week_day = english_date.get_week_day();
             let english_month = english_date.get_month();
@@ -43,15 +40,10 @@ pub fn format_date_with_weekday(date: Date) -> String {
 
             format!(
                 "{}, {} {} {}",
-                english_week_day,
-                english_day,
-                english_month,
-                english_year
+                english_week_day, english_day, english_month, english_year
             )
-        },
-        Date::Invalid => {
-            "Invalid Date".to_string()
-        },
+        }
+        Date::Invalid => "Invalid Date".to_string(),
     }
 }
 
@@ -78,16 +70,14 @@ pub fn format_date(date: Date) -> String {
             let bengali_year = bengali_date.get_year();
 
             format!("{} {} {}", bengali_day, bengali_month, bengali_year)
-        },
+        }
         Date::English(english_date) => {
             let english_month = english_date.get_month();
             let english_day = english_date.get_day();
             let english_year = english_date.get_year();
 
             format!("{} {} {}", english_day, english_month, english_year)
-        },
-        Date::Invalid => {
-            "Invalid Date".to_string()
-        },
+        }
+        Date::Invalid => "Invalid Date".to_string(),
     }
 }

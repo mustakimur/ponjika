@@ -101,16 +101,16 @@ impl EnglishWeekDays {
     /// ```
     /// # Note
     /// * The function will return the English week day
-    pub fn mapt_to_english_weekday(week_day: &str) -> EnglishWeekDays {
+    pub fn mapt_to_english_weekday(week_day: &str) -> Option<EnglishWeekDays> {
         match week_day {
-            "রবিবার" => EnglishWeekDays::Sunday,
-            "সোমবার" => EnglishWeekDays::Monday,
-            "মঙ্গলবার" => EnglishWeekDays::Tuesday,
-            "বুধবার" => EnglishWeekDays::Wednesday,
-            "বৃহস্পতিবার" => EnglishWeekDays::Thursday,
-            "শুক্রবার" => EnglishWeekDays::Friday,
-            "শনিবার" => EnglishWeekDays::Saturday,
-            _ => EnglishWeekDays::Sunday,
+            "রবিবার" => Some(EnglishWeekDays::Sunday),
+            "সোমবার" => Some(EnglishWeekDays::Monday),
+            "মঙ্গলবার" => Some(EnglishWeekDays::Tuesday),
+            "বুধবার" => Some(EnglishWeekDays::Wednesday),
+            "বৃহস্পতিবার" => Some(EnglishWeekDays::Thursday),
+            "শুক্রবার" => Some(EnglishWeekDays::Friday),
+            "শনিবার" => Some(EnglishWeekDays::Saturday),
+            _ => None,
         }
     }
 }
@@ -180,16 +180,16 @@ impl BengaliWeekDays {
     /// ```
     /// # Note
     /// * The function will return the Bengali week day
-    pub fn map_to_english_weekday(week_day: &str) -> BengaliWeekDays {
+    pub fn map_to_english_weekday(week_day: &str) -> Option<BengaliWeekDays> {
         match week_day {
-            "Sunday" => BengaliWeekDays::Robibar,
-            "Monday" => BengaliWeekDays::Sombar,
-            "Tuesday" => BengaliWeekDays::Mongolbar,
-            "Wednesday" => BengaliWeekDays::Budhbar,
-            "Thursday" => BengaliWeekDays::Brihoshpotibar,
-            "Friday" => BengaliWeekDays::Shukrobar,
-            "Saturday" => BengaliWeekDays::Shonibar,
-            _ => BengaliWeekDays::Robibar,
+            "Sunday" => Some(BengaliWeekDays::Robibar),
+            "Monday" => Some(BengaliWeekDays::Sombar),
+            "Tuesday" => Some(BengaliWeekDays::Mongolbar),
+            "Wednesday" => Some(BengaliWeekDays::Budhbar),
+            "Thursday" => Some(BengaliWeekDays::Brihoshpotibar),
+            "Friday" => Some(BengaliWeekDays::Shukrobar),
+            "Saturday" => Some(BengaliWeekDays::Shonibar),
+            _ => None,
         }
     }
 }
