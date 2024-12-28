@@ -3,6 +3,8 @@ use chrono::{Datelike, TimeZone, Utc, Weekday};
 use crate::days::{BengaliWeekDays, EnglishWeekDays};
 use crate::months::{BengaliMonths, EnglishMonths, Month};
 
+/// The enum `Date` is used to represent both English and Bengali dates.
+/// The invalid variant is used when the date is invalid.
 pub enum Date {
     English(EnglishDate),
     Bengali(BengaliDate),
@@ -10,6 +12,18 @@ pub enum Date {
 }
 
 impl Date {
+    /// Get the English date from the selected date
+    /// # Returns
+    /// * `Option<EnglishDate>` - The English date
+    /// # Example
+    /// ```
+    /// use ponjika::date::EnglishDate;
+    /// let date = EnglishDate::create_date(14, 4, 2021);
+    /// assert_eq!(date.get_english_date().unwrap().get_day(), "14");
+    /// ```
+    /// # Note
+    /// * The function will return the English date
+    /// * The function will return `None` if the date is not English
     pub fn get_english_date(self) -> Option<EnglishDate> {
         match self {
             Date::English(date) => Some(date),
@@ -17,6 +31,18 @@ impl Date {
         }
     }
 
+    /// Get the Bengali date from the selected date
+    /// # Returns
+    /// * `Option<BengaliDate>` - The Bengali date
+    /// # Example
+    /// ```
+    /// use ponjika::date::BengaliDate;
+    /// let date = BengaliDate::create_date(1, 1, 1427);
+    /// assert_eq!(date.get_bengali_date().unwrap().get_day(), "১");
+    /// ```
+    /// # Note
+    /// * The function will return the Bengali date
+    /// * The function will return `None` if the date is not Bengali
     pub fn get_bengali_date(self) -> Option<BengaliDate> {
         match self {
             Date::Bengali(date) => Some(date),
@@ -24,6 +50,18 @@ impl Date {
         }
     }
 
+    /// Get the day of the selected date
+    /// # Returns
+    /// * `String` - The day of the date
+    /// # Example
+    /// ```
+    /// use ponjika::date::EnglishDate;
+    /// let date = EnglishDate::create_date(14, 4, 2021);
+    /// assert_eq!(date.get_day(), "14");
+    /// ```
+    /// # Note
+    /// * The function will return the day of the date
+    /// * The function will return "DateError: The day in the date was wrong" if the day is invalid
     pub fn get_day(&self) -> String {
         match self {
             Date::English(date) => date.get_day(),
@@ -32,6 +70,18 @@ impl Date {
         }
     }
 
+    /// Get the week day of the selected date
+    /// # Returns
+    /// * `String` - The week day of the date
+    /// # Example
+    /// ```
+    /// use ponjika::date::EnglishDate;
+    /// let date = EnglishDate::create_date(14, 4, 2021);
+    /// assert_eq!(date.get_week_day(), "Wednesday");
+    /// ```
+    /// # Note
+    /// * The function will return the week day of the date
+    /// * The function will return "DateError: The week day in the date was wrong" if the week day is invalid
     pub fn get_week_day(&self) -> String {
         match self {
             Date::English(date) => date.get_week_day().to_string(),
@@ -40,6 +90,18 @@ impl Date {
         }
     }
 
+    /// Get the month of the selected date
+    /// # Returns
+    /// * `String` - The month of the date
+    /// # Example
+    /// ```
+    /// use ponjika::date::EnglishDate;
+    /// let date = EnglishDate::create_date(14, 4, 2021);
+    /// assert_eq!(date.get_month(), "April");
+    /// ```
+    /// # Note
+    /// * The function will return the month of the date
+    /// * The function will return "DateError: The month in the date was wrong" if the month is invalid
     pub fn get_month(&self) -> String {
         match self {
             Date::English(date) => date.get_month(),
@@ -48,6 +110,18 @@ impl Date {
         }
     }
 
+    /// Get the year of the selected date
+    /// # Returns
+    /// * `String` - The year of the date
+    /// # Example
+    /// ```
+    /// use ponjika::date::EnglishDate;
+    /// let date = EnglishDate::create_date(14, 4, 2021);
+    /// assert_eq!(date.get_year(), "2021");
+    /// ```
+    /// # Note
+    /// * The function will return the year of the date
+    /// * The function will return "DateError: The year in the date was wrong" if the year is invalid
     pub fn get_year(&self) -> String {
         match self {
             Date::English(date) => date.get_year(),
@@ -57,6 +131,7 @@ impl Date {
     }
 }
 
+/// The struct `EnglishDate` is used to represent the English date.
 #[derive(Debug)]
 pub struct EnglishDate {
     day: u8,
@@ -106,6 +181,22 @@ impl EnglishDate {
         }
     }
 
+    /// Create an English date
+    /// # Arguments
+    /// * `day` - u8
+    /// * `month` - u8
+    /// * `year` - u16
+    /// # Returns
+    /// * `Date` - The English date
+    /// # Example
+    /// ```
+    /// use ponjika::date::EnglishDate;
+    /// let date = EnglishDate::create_date(14, 4, 2021);
+    /// assert_eq!(date.get_english_date().unwrap().get_day(), "14");
+    /// ```
+    /// # Note
+    /// * The function will return the English date
+    /// * The function will return `Date::Invalid` if the date is invalid
     pub fn create_date(day: u8, month: u8, year: u16) -> Date {
         if !Self::is_valid_date(day, month, year) {
             return Date::Invalid;
@@ -183,6 +274,7 @@ impl EnglishDate {
     }
 }
 
+/// The struct `BengaliDate` is used to represent the Bengali date.
 #[derive(Debug)]
 pub struct BengaliDate {
     day: u8,
@@ -232,6 +324,24 @@ impl BengaliDate {
         }
     }
 
+    /// Create a Bengali date
+    /// # Arguments
+    /// * `day` - u8
+    /// * `week_day` - BengaliWeekDays
+    /// * `month` - u8
+    /// * `year` - u16
+    /// # Returns
+    /// * `Date` - The Bengali date
+    /// # Example
+    /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::days::BengaliWeekDays;
+    /// let date = BengaliDate::create_bengali_date(1, BengaliWeekDays::Robibar, 1, 1427);
+    /// assert_eq!(date.get_bengali_date().unwrap().get_day(), "১");
+    /// ```
+    /// # Note
+    /// * The function will return the Bengali date
+    /// * The function will return `Date::Invalid` if the date is invalid
     pub fn create_bengali_date(day: u8, week_day: BengaliWeekDays, month: u8, year: u16) -> Date {
         if !Self::is_valid_date(day, month, year) {
             return Date::Invalid;
@@ -246,6 +356,22 @@ impl BengaliDate {
         })
     }
 
+    /// Create a Bengali date
+    /// # Arguments
+    /// * `day` - u8
+    /// * `month` - u8
+    /// * `year` - u16
+    /// # Returns
+    /// * `Date` - The Bengali date
+    /// # Example
+    /// ```
+    /// use ponjika::date::BengaliDate;
+    /// let date = BengaliDate::create_date(1, 1, 1427);
+    /// assert_eq!(date.get_bengali_date().unwrap().get_day(), "১");
+    /// ```
+    /// # Note
+    /// * The function will return the Bengali date
+    /// * The function will return `Date::Invalid` if the date is invalid
     pub fn create_date(day: u8, month: u8, year: u16) -> Date {
         if !Self::is_valid_date(day, month, year) {
             return Date::Invalid;

@@ -1,5 +1,5 @@
 mod calendar;
-mod date;
+pub mod date;
 pub mod days;
 pub mod months;
 mod season;
