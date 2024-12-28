@@ -1,3 +1,8 @@
+//! # Date: The module to represent the dates in English and Bengali
+//! The `date` module is used to represent both English and Bengali dates.
+//! The `Date` enum is used to represent both English and Bengali dates.
+//! The `EnglishDate` and `BengaliDate` struct variants are the English and Bengali dates respectively.
+
 use chrono::{Datelike, TimeZone, Utc, Weekday};
 
 use crate::days::{BengaliWeekDays, EnglishWeekDays};
@@ -12,6 +17,10 @@ pub enum Date {
 }
 
 impl Date {
+    pub fn get_date(self) -> Date {
+        self
+    }
+    
     /// Get the English date from the selected date
     /// # Returns
     /// * `Option<EnglishDate>` - The English date

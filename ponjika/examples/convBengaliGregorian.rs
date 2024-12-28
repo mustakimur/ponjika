@@ -8,7 +8,7 @@ fn main() {
             return;
         }
         _ => {
-            println!("{}", format_bengali_date(date));
+            println!("{}", format_date(date));
         }
     }
 }

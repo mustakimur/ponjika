@@ -1,3 +1,8 @@
+//! # Months: The module to represent the months
+//! This module contains the enum `Month` and the enum `EnglishMonths` and `BengaliMonths`.
+//! The `Month` enum is used to represent both English and Bengali months.
+//! The `EnglishMonths` and `BengaliMonths` enum variants are the English and Bengali months respectively.
+
 /// The enum `Month` is used to represent both English and Bengali months.
 /// The invalid variant is used when the month is invalid.
 #[derive(Debug)]

@@ -1,11 +1,12 @@
 [package]
 name = "ponjika"
-version = "0.1.0"
+version = "0.1.2"
 edition = "2021"
-description = "Ponjika is a Bangla date time library for Rust."
+description = "Ponjika is a Bangla calendar library for Rust."
 license = "GPL-3.0"
 repository = "https://github.com/mustakimur/ponjika"
 documentation = "https://docs.rs/ponjika"
+readme = "README.md"
 
 [dependencies]
 chrono = "0.4"

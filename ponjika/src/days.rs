@@ -1,3 +1,8 @@
+//! # Days: The week day names in English and Bengali
+//! The `days` module provides the week day names in English and Bengali.
+//! The `WeekDays` enum is used to represent both English and Bengali week days.
+//! The `EnglishWeekDays` and `BengaliWeekDays` enum variants are the English and Bengali week days respectively.
+
 /// The enum `WeekDays` is used to represent both English and Bengali week days.
 /// The invalid variant is used when the week day is invalid.
 pub enum WeekDays {

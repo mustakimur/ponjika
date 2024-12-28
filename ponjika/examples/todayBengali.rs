@@ -7,7 +7,7 @@ fn main() {
             return;
         }
         _ => {
-            println!("{}", format_bengali_date_with_weekday(today));
+            println!("{}", format_date_with_weekday(today));
         }
     }
 }
