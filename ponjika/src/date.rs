@@ -17,6 +17,13 @@ impl Date {
         }
     }
 
+    pub fn get_bengali_date(self) -> Option<BengaliDate> {
+        match self {
+            Date::Bengali(date) => Some(date),
+            _ => None,
+        }
+    }
+
     pub fn get_day(&self) -> String {
         match self {
             Date::English(date) => date.get_day(),
@@ -50,6 +57,7 @@ impl Date {
     }
 }
 
+#[derive(Debug)]
 pub struct EnglishDate {
     day: u8,
     week_day: EnglishWeekDays,

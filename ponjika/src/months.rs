@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum Month {
     English(EnglishMonths),
     Bengali(BengaliMonths),
@@ -14,6 +15,7 @@ impl Month {
     }
 }
 
+#[derive(Debug)]
 pub enum EnglishMonths {
     January,
     February,
@@ -66,6 +68,7 @@ impl EnglishMonths {
     }
 }
 
+#[derive(Debug)]
 pub enum BengaliMonths {
     Baishakh,
     Jestha,

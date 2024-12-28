@@ -14,6 +14,7 @@ impl WeekDays {
     }
 }
 
+#[derive(Debug)]
 pub enum EnglishWeekDays {
     Sunday,
     Monday,
@@ -63,6 +64,7 @@ impl EnglishWeekDays {
     }
 }
 
+#[derive(Debug)]
 pub enum BengaliWeekDays {
     Robibar,
     Sombar,
