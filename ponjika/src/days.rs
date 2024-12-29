@@ -85,7 +85,7 @@ impl EnglishWeekDays {
         }
     }
 
-    /// Map the Bengali week day name to the English week day name
+    /// Map the Bengali week day name to the English week day
     /// # Arguments
     /// * `week_day` - &str
     /// # Returns
@@ -165,7 +165,7 @@ impl BengaliWeekDays {
         }
     }
 
-    /// Map the English week day name to the Bengali week day name
+    /// Map the English week day name to the Bengali week day
     /// # Arguments
     /// * `week_day` - &str
     /// # Returns

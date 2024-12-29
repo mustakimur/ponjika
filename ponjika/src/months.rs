@@ -20,15 +20,15 @@ impl Month {
     /// ```
     /// use ponjika::months::{Month, EnglishMonths, BengaliMonths};
     /// let month = Month::English(EnglishMonths::January);
-    /// assert_eq!(month.get_name(), "January");
+    /// assert_eq!(month.get_month_name(), "January");
     /// let month = Month::Bengali(BengaliMonths::Baishakh);
-    /// assert_eq!(month.get_name(), "বৈশাখ");
+    /// assert_eq!(month.get_month_name(), "বৈশাখ");
     /// ```
     /// # Note
     /// * The function will return the name of the month
     /// * The function will return "MonthError: The month in the date was wrong" if the month is invalid
     ///
-    pub fn get_name(&self) -> &str {
+    pub fn get_month_name(&self) -> &str {
         match self {
             Month::English(month) => month.get_name(),
             Month::Bengali(month) => month.get_name(),
@@ -56,6 +56,23 @@ pub enum EnglishMonths {
 }
 
 impl EnglishMonths {
+    fn get_name(&self) -> &str {
+        match self {
+            EnglishMonths::January => "January",
+            EnglishMonths::February => "February",
+            EnglishMonths::March => "March",
+            EnglishMonths::April => "April",
+            EnglishMonths::May => "May",
+            EnglishMonths::June => "June",
+            EnglishMonths::July => "July",
+            EnglishMonths::August => "August",
+            EnglishMonths::September => "September",
+            EnglishMonths::October => "October",
+            EnglishMonths::November => "November",
+            EnglishMonths::December => "December",
+        }
+    }
+
     /// Get the enum `EnglishMonths` variant of the selected month
     /// # Arguments
     /// * `month` - u8
@@ -91,23 +108,6 @@ impl EnglishMonths {
             _ => Month::Invalid,
         }
     }
-
-    fn get_name(&self) -> &str {
-        match self {
-            EnglishMonths::January => "January",
-            EnglishMonths::February => "February",
-            EnglishMonths::March => "March",
-            EnglishMonths::April => "April",
-            EnglishMonths::May => "May",
-            EnglishMonths::June => "June",
-            EnglishMonths::July => "July",
-            EnglishMonths::August => "August",
-            EnglishMonths::September => "September",
-            EnglishMonths::October => "October",
-            EnglishMonths::November => "November",
-            EnglishMonths::December => "December",
-        }
-    }
 }
 
 /// The enum `BengaliMonths` is used to represent the Bengali months.
@@ -129,6 +129,23 @@ pub enum BengaliMonths {
 }
 
 impl BengaliMonths {
+    fn get_name(&self) -> &str {
+        match self {
+            BengaliMonths::Baishakh => "বৈশাখ",
+            BengaliMonths::Jestha => "জ্যেষ্ঠ",
+            BengaliMonths::Ashad => "আষাঢ়",
+            BengaliMonths::Shrawan => "শ্রাবণ",
+            BengaliMonths::Bhadra => "ভাদ্র",
+            BengaliMonths::Ashwin => "আশ্বিন",
+            BengaliMonths::Kartik => "কার্তিক",
+            BengaliMonths::Ogrohaeon => "অগ্রহায়ণ",
+            BengaliMonths::Poush => "পৌষ",
+            BengaliMonths::Magh => "মাঘ",
+            BengaliMonths::Falgun => "ফাল্গুন",
+            BengaliMonths::Chaitra => "চৈত্র",
+        }
+    }
+
     /// Get the enum `BengaliMonths` variant of the selected month
     /// # Arguments
     /// * `month` - u8
@@ -162,23 +179,6 @@ impl BengaliMonths {
             11 => Month::Bengali(BengaliMonths::Falgun),
             12 => Month::Bengali(BengaliMonths::Chaitra),
             _ => Month::Invalid,
-        }
-    }
-
-    fn get_name(&self) -> &str {
-        match self {
-            BengaliMonths::Baishakh => "বৈশাখ",
-            BengaliMonths::Jestha => "জ্যেষ্ঠ",
-            BengaliMonths::Ashad => "আষাঢ়",
-            BengaliMonths::Shrawan => "শ্রাবণ",
-            BengaliMonths::Bhadra => "ভাদ্র",
-            BengaliMonths::Ashwin => "আশ্বিন",
-            BengaliMonths::Kartik => "কার্তিক",
-            BengaliMonths::Ogrohaeon => "অগ্রহায়ণ",
-            BengaliMonths::Poush => "পৌষ",
-            BengaliMonths::Magh => "মাঘ",
-            BengaliMonths::Falgun => "ফাল্গুন",
-            BengaliMonths::Chaitra => "চৈত্র",
         }
     }
 }

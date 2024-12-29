@@ -263,7 +263,7 @@ impl EnglishDate {
     }
 
     pub fn get_month(&self) -> String {
-        self.month_name.get_name().to_string()
+        self.month_name.get_month_name().to_string()
     }
 
     pub fn get_month_number(&self) -> u8 {
@@ -456,6 +456,6 @@ impl BengaliDate {
     }
 
     pub fn get_month(&self) -> String {
-        self.month_name.get_name().to_string()
+        self.month_name.get_month_name().to_string()
     }
 }
