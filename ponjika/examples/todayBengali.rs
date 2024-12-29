@@ -3,7 +3,7 @@ fn main() {
     let today = get_today_bengali_calendar();
     match today {
         Date::Invalid => {
-            eprintln!("Invalid date");
+            eprintln!("The system return an invalid date");
             return;
         }
         _ => {

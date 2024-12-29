@@ -91,21 +91,38 @@ impl EnglishMonths {
     /// # Note
     /// * The function will return the `EnglishMonth` enum variant of the selected month
     /// * The function will return `Month::Invalid` if the month is invalid
-    pub fn get_month(month: u8) -> Month {
+    pub fn get_month(month: u8) -> Option<EnglishMonths> {
         match month {
-            1 => Month::English(EnglishMonths::January),
-            2 => Month::English(EnglishMonths::February),
-            3 => Month::English(EnglishMonths::March),
-            4 => Month::English(EnglishMonths::April),
-            5 => Month::English(EnglishMonths::May),
-            6 => Month::English(EnglishMonths::June),
-            7 => Month::English(EnglishMonths::July),
-            8 => Month::English(EnglishMonths::August),
-            9 => Month::English(EnglishMonths::September),
-            10 => Month::English(EnglishMonths::October),
-            11 => Month::English(EnglishMonths::November),
-            12 => Month::English(EnglishMonths::December),
-            _ => Month::Invalid,
+            1 => Some(EnglishMonths::January),
+            2 => Some(EnglishMonths::February),
+            3 => Some(EnglishMonths::March),
+            4 => Some(EnglishMonths::April),
+            5 => Some(EnglishMonths::May),
+            6 => Some(EnglishMonths::June),
+            7 => Some(EnglishMonths::July),
+            8 => Some(EnglishMonths::August),
+            9 => Some(EnglishMonths::September),
+            10 => Some(EnglishMonths::October),
+            11 => Some(EnglishMonths::November),
+            12 => Some(EnglishMonths::December),
+            _ => None,
+        }
+    }
+
+    pub fn map_month_to_index(&self) -> u8 {
+        match self {
+            EnglishMonths::January => 1,
+            EnglishMonths::February => 2,
+            EnglishMonths::March => 3,
+            EnglishMonths::April => 4,
+            EnglishMonths::May => 5,
+            EnglishMonths::June => 6,
+            EnglishMonths::July => 7,
+            EnglishMonths::August => 8,
+            EnglishMonths::September => 9,
+            EnglishMonths::October => 10,
+            EnglishMonths::November => 11,
+            EnglishMonths::December => 12,
         }
     }
 }
@@ -164,21 +181,38 @@ impl BengaliMonths {
     /// # Note
     /// * The function will return the `BengaliMonth` enum variant of the selected month
     /// * The function will return `Month::Invalid` if the month is invalid
-    pub fn get_month(month: u8) -> Month {
+    pub fn get_month(month: u8) -> Option<BengaliMonths> {
         match month {
-            1 => Month::Bengali(BengaliMonths::Baishakh),
-            2 => Month::Bengali(BengaliMonths::Jestha),
-            3 => Month::Bengali(BengaliMonths::Ashad),
-            4 => Month::Bengali(BengaliMonths::Shrawan),
-            5 => Month::Bengali(BengaliMonths::Bhadra),
-            6 => Month::Bengali(BengaliMonths::Ashwin),
-            7 => Month::Bengali(BengaliMonths::Kartik),
-            8 => Month::Bengali(BengaliMonths::Ogrohaeon),
-            9 => Month::Bengali(BengaliMonths::Poush),
-            10 => Month::Bengali(BengaliMonths::Magh),
-            11 => Month::Bengali(BengaliMonths::Falgun),
-            12 => Month::Bengali(BengaliMonths::Chaitra),
-            _ => Month::Invalid,
+            1 => Some(BengaliMonths::Baishakh),
+            2 => Some(BengaliMonths::Jestha),
+            3 => Some(BengaliMonths::Ashad),
+            4 => Some(BengaliMonths::Shrawan),
+            5 => Some(BengaliMonths::Bhadra),
+            6 => Some(BengaliMonths::Ashwin),
+            7 => Some(BengaliMonths::Kartik),
+            8 => Some(BengaliMonths::Ogrohaeon),
+            9 => Some(BengaliMonths::Poush),
+            10 => Some(BengaliMonths::Magh),
+            11 => Some(BengaliMonths::Falgun),
+            12 => Some(BengaliMonths::Chaitra),
+            _ => None,
+        }
+    }
+
+    pub fn map_month_to_index(&self) -> u8 {
+        match self {
+            BengaliMonths::Baishakh => 1,
+            BengaliMonths::Jestha => 2,
+            BengaliMonths::Ashad => 3,
+            BengaliMonths::Shrawan => 4,
+            BengaliMonths::Bhadra => 5,
+            BengaliMonths::Ashwin => 6,
+            BengaliMonths::Kartik => 7,
+            BengaliMonths::Ogrohaeon => 8,
+            BengaliMonths::Poush => 9,
+            BengaliMonths::Magh => 10,
+            BengaliMonths::Falgun => 11,
+            BengaliMonths::Chaitra => 12,
         }
     }
 }

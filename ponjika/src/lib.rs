@@ -136,7 +136,7 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
     BengaliDate::create_bengali_date(
         bengali_day,
         bengali_weekday.unwrap(),
-        bengali_month,
+        BengaliMonths::get_month(bengali_month).unwrap(),
         bengali_year,
     )
 }
@@ -159,14 +159,22 @@ pub fn get_today_bengali_calendar() -> Date {
     let today_month = today.month() as u8;
     let today_year = today.year() as u16;
 
-    let english_date =
-        EnglishDate::create_date(today_day, today_month, today_year).get_english_date();
+    match EnglishMonths::get_month(today_month) {
+        None => return Date::Invalid,
+        Some(month) => {
+            let english_date = EnglishDate::create_date(
+                today_day,
+                month,
+                today_year,
+            );
 
-    match english_date {
-        None => Date::Invalid,
-        Some(date) => {
-            let bengali_date = gregorian_to_bengali_date(date);
-            bengali_date
+            match english_date {
+                None => Date::Invalid,
+                Some(date) => {
+                    let bengali_date = gregorian_to_bengali_date(date);
+                    bengali_date
+                }
+            }
         }
     }
 }
@@ -187,16 +195,9 @@ pub fn get_today_bengali_calendar() -> Date {
 /// # Note
 /// * The function will return `Date::Invalid` if the gregorian date is invalid
 /// * The function will return the Bengali date if the date is valid
-pub fn get_bengali_date_from_gregorian(day: u8, month: u8, year: u16) -> Date {
-    let english_date = EnglishDate::create_date(day, month, year).get_english_date();
-
-    match english_date {
-        None => Date::Invalid,
-        Some(date) => {
-            let bengali_date = gregorian_to_bengali_date(date);
-            bengali_date
-        }
-    }
+pub fn get_bengali_date_from_gregorian(english_date: EnglishDate) -> Date {
+    let bengali_date = gregorian_to_bengali_date(english_date);
+    bengali_date
 }
 
 #[cfg(test)]

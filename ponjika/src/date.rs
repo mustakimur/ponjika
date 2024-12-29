@@ -5,7 +5,7 @@
 
 use chrono::{Datelike, TimeZone, Utc, Weekday};
 
-use crate::days::{WeekDays, BengaliWeekDays, EnglishWeekDays};
+use crate::days::{BengaliWeekDays, EnglishWeekDays, WeekDays};
 use crate::months::{BengaliMonths, EnglishMonths, Month};
 
 /// The enum `Date` is used to represent both English and Bengali dates.
@@ -202,15 +202,16 @@ impl EnglishDate {
     /// # Note
     /// * The function will return the English date
     /// * The function will return `Date::Invalid` if the date is invalid
-    pub fn create_date(day: u8, month: u8, year: u16) -> Date {
-        if !Self::is_valid_date(day, month, year) {
-            return Date::Invalid;
+    pub fn create_date(day: u8, month: EnglishMonths, year: u16) -> Option<Self> {
+        let month_index = month.map_month_to_index();
+        if !Self::is_valid_date(day, month_index, year) {
+            return None;
         }
 
         let week_day = match year {
             593..=9999 => {
                 let date = Utc
-                    .with_ymd_and_hms(year as i32, month as u32, day as u32, 0, 0, 0)
+                    .with_ymd_and_hms(year as i32, month_index as u32, day as u32, 0, 0, 0)
                     .unwrap();
                 match date.weekday() {
                     Weekday::Mon => WeekDays::English(EnglishWeekDays::Monday),
@@ -222,30 +223,14 @@ impl EnglishDate {
                     Weekday::Sun => WeekDays::English(EnglishWeekDays::Sunday),
                 }
             }
-            _ => return Date::Invalid,
+            _ => return None,
         };
 
-        let month_name = match month {
-            1 => Month::English(EnglishMonths::January),
-            2 => Month::English(EnglishMonths::February),
-            3 => Month::English(EnglishMonths::March),
-            4 => Month::English(EnglishMonths::April),
-            5 => Month::English(EnglishMonths::May),
-            6 => Month::English(EnglishMonths::June),
-            7 => Month::English(EnglishMonths::July),
-            8 => Month::English(EnglishMonths::August),
-            9 => Month::English(EnglishMonths::September),
-            10 => Month::English(EnglishMonths::October),
-            11 => Month::English(EnglishMonths::November),
-            12 => Month::English(EnglishMonths::December),
-            _ => return Date::Invalid,
-        };
-
-        Date::English(EnglishDate {
+        Some(EnglishDate {
             day,
             week_day,
-            month,
-            month_name,
+            month: month_index,
+            month_name: Month::English(month),
             year,
         })
     }
@@ -347,16 +332,17 @@ impl BengaliDate {
     /// # Note
     /// * The function will return the Bengali date
     /// * The function will return `Date::Invalid` if the date is invalid
-    pub fn create_bengali_date(day: u8, week_day: BengaliWeekDays, month: u8, year: u16) -> Date {
-        if !Self::is_valid_date(day, month, year) {
+    pub fn create_bengali_date(day: u8, week_day: BengaliWeekDays, month: BengaliMonths, year: u16) -> Date {
+        let month_index = month.map_month_to_index();
+        if !Self::is_valid_date(day, month_index, year) {
             return Date::Invalid;
         }
 
         Date::Bengali(BengaliDate {
             day,
             week_day: WeekDays::Bengali(week_day),
-            month,
-            month_name: BengaliMonths::get_month(month),
+            month: month_index,
+            month_name: Month::Bengali(BengaliMonths::get_month(month_index).unwrap()),
             year,
         })
     }
@@ -377,15 +363,16 @@ impl BengaliDate {
     /// # Note
     /// * The function will return the Bengali date
     /// * The function will return `Date::Invalid` if the date is invalid
-    pub fn create_date(day: u8, month: u8, year: u16) -> Date {
-        if !Self::is_valid_date(day, month, year) {
-            return Date::Invalid;
+    pub fn create_date(day: u8, month: BengaliMonths, year: u16) -> Option<Self> {
+        let month_index = month.map_month_to_index();
+        if !Self::is_valid_date(day, month_index, year) {
+            return None;
         }
 
         let week_day = match year {
             0..=8568 => {
                 let date = Utc
-                    .with_ymd_and_hms(year as i32, month as u32, day as u32, 0, 0, 0)
+                    .with_ymd_and_hms(year as i32, month_index as u32, day as u32, 0, 0, 0)
                     .unwrap();
                 match date.weekday() {
                     Weekday::Mon => WeekDays::Bengali(BengaliWeekDays::Sombar),
@@ -397,30 +384,14 @@ impl BengaliDate {
                     Weekday::Sun => WeekDays::Bengali(BengaliWeekDays::Robibar),
                 }
             }
-            _ => return Date::Invalid,
+            _ => return None,
         };
 
-        let month_name = match month {
-            1 => Month::Bengali(BengaliMonths::Baishakh),
-            2 => Month::Bengali(BengaliMonths::Jestha),
-            3 => Month::Bengali(BengaliMonths::Ashad),
-            4 => Month::Bengali(BengaliMonths::Shrawan),
-            5 => Month::Bengali(BengaliMonths::Bhadra),
-            6 => Month::Bengali(BengaliMonths::Ashwin),
-            7 => Month::Bengali(BengaliMonths::Kartik),
-            8 => Month::Bengali(BengaliMonths::Ogrohaeon),
-            9 => Month::Bengali(BengaliMonths::Poush),
-            10 => Month::Bengali(BengaliMonths::Magh),
-            11 => Month::Bengali(BengaliMonths::Falgun),
-            12 => Month::Bengali(BengaliMonths::Chaitra),
-            _ => return Date::Invalid,
-        };
-
-        Date::Bengali(BengaliDate {
+        Some(BengaliDate {
             day,
             week_day,
-            month,
-            month_name,
+            month: month_index,
+            month_name: Month::Bengali(month),
             year,
         })
     }

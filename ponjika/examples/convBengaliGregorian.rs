@@ -1,14 +1,23 @@
 use ponjika::*;
 fn main() {
-    let date = get_bengali_date_from_gregorian(30, 3, 2012);
+    let date = EnglishDate::create_date(10, EnglishMonths::October, 2010);
 
     match date {
-        Date::Invalid => {
-            eprintln!("Invalid date");
-            return;
+        Some(english_date) => {
+            let bengali_date = get_bengali_date_from_gregorian(english_date);
+            match bengali_date {
+                Date::Invalid => {
+                    eprintln!("Failed to convert to Bengali date");
+                    return;
+                }
+                _ => {
+                    println!("{}", format_date(bengali_date));
+                }
+            }
         }
-        _ => {
-            println!("{}", format_date(date));
+        None => {
+            eprintln!("The date is not a valid greogrian date");
+            return;
         }
     }
 }
