@@ -4,6 +4,8 @@
 //! The `EnglishDate` and `BengaliDate` struct variants are the English and Bengali dates respectively.
 //! The `DateError` enum is used to represent the error when the date is invalid.
 
+use std::fmt;
+
 use chrono::{Datelike, TimeZone, Utc, Weekday};
 
 use crate::days::{BengaliWeekDays, EnglishWeekDays, WeekDayError, WeekDays};
@@ -32,7 +34,9 @@ impl std::fmt::Display for DateError {
             }
             DateError::WrongDay => write!(f, "DateError: The day in the date was wrong"),
             DateError::WrongYear => write!(f, "DateError: The year in the date was wrong"),
-            DateError::NumToCharError => write!(f, "DateError: Failed to convert number to character"),
+            DateError::NumToCharError => {
+                write!(f, "DateError: Failed to convert number to character")
+            }
         }
     }
 }
@@ -122,6 +126,30 @@ impl Date {
                 },
             )),
             Date::Unknown => Err(DateError::UnknownDate),
+        }
+    }
+}
+
+impl fmt::Display for Date {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Date::English(date) => write!(
+                f,
+                "{1}, {0} {2} {3}",
+                date.get_day(),
+                date.get_week_day().unwrap(),
+                date.get_month().unwrap(),
+                date.get_year()
+            ),
+            Date::Bengali(date) => write!(
+                f,
+                "{1}, {0} {2} {3}",
+                date.get_day().unwrap(),
+                date.get_week_day().unwrap(),
+                date.get_month().unwrap(),
+                date.get_year().unwrap()
+            ),
+            Date::Unknown => write!(f, "Unknown date"),
         }
     }
 }
@@ -412,11 +440,9 @@ impl BengaliDate {
         self.day
             .to_string()
             .chars()
-            .map(|c| {
-                match c.to_digit(10) {
-                    Some(digit) => Ok(bengali_digits[digit as usize]),
-                    None => return Err(DateError::NumToCharError),
-                }
+            .map(|c| match c.to_digit(10) {
+                Some(digit) => Ok(bengali_digits[digit as usize]),
+                None => return Err(DateError::NumToCharError),
             })
             .collect()
     }
@@ -427,11 +453,9 @@ impl BengaliDate {
         self.year
             .to_string()
             .chars()
-            .map(|c| {
-                match c.to_digit(10) {
-                    Some(digit) => Ok(bengali_digits[digit as usize]),
-                    None => return Err(DateError::NumToCharError),
-                }
+            .map(|c| match c.to_digit(10) {
+                Some(digit) => Ok(bengali_digits[digit as usize]),
+                None => return Err(DateError::NumToCharError),
             })
             .collect()
     }

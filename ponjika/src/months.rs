@@ -4,7 +4,7 @@
 //! The `EnglishMonths` and `BengaliMonths` enum variants are the English and Bengali months respectively.
 //! The `MonthError` enum is used to represent the error when the month is invalid.
 
-use core::fmt;
+use std::fmt;
 
 #[derive(Debug)]
 pub enum MonthError {
