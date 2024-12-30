@@ -1,6 +1,6 @@
 use ponjika::*;
 fn main() {
-    let date = EnglishDate::create_date(10, EnglishMonths::October, 2010);
+    let date = EnglishDate::create_date(30, EnglishMonths::November, 2010);
 
     match date {
         Ok(english_date) => {
@@ -9,14 +9,14 @@ fn main() {
                 Ok(date) => {
                     println!("{}", date.to_string());
                 }
-                Err(_) => {
-                    eprintln!("Failed to convert to Bengali date");
+                Err(convert_err) => {
+                    eprintln!("Failed to convert to Bengali date: {:?}", convert_err);
                     return;
                 }
             }
         }
-        Err(_) => {
-            eprintln!("The date is not a valid greogrian date");
+        Err(err) => {
+            eprintln!("DateError: {:?}", err);
             return;
         }
     }

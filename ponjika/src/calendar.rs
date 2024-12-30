@@ -132,7 +132,7 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
 
 /// Get today's Bengali date
 /// # Returns
-/// * `Date` - Bengali date
+/// * `Result<Date, DateError>` - Bengali date
 /// # Example
 /// ```
 /// use ponjika::calendar;
@@ -147,7 +147,7 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
 /// }
 /// ```
 /// # Note
-/// * The function will return `DateError` if the date is invalid
+/// * The function will return `DateError` if the system date is invalid
 pub fn get_today_bengali_date() -> Result<Date, DateError> {
     let today = Local::now();
 
@@ -189,17 +189,32 @@ pub fn get_today_bengali_date() -> Result<Date, DateError> {
 
 /// Get Bengali date from Gregorian date
 /// # Arguments
-/// * `day` - u8
-/// * `month` - u8
-/// * `year` - u16
+/// * `english_date` - EnglishDate
 /// # Returns
-/// * `Date` - Bengali date
+/// * `Result<Date, DateError>` - Bengali date
 /// # Example
 /// ```
+/// use ponjika::{calendar, EnglishDate, EnglishMonths};
+/// let date = EnglishDate::create_date(10, EnglishMonths::October, 2010);
+/// match date {
+///  Ok(english_date) => {
+///   let bengali_date = calendar::get_bengali_date_from_gregorian(english_date);
+///   match bengali_date {
+///    Ok(date) => {
+///     println!("{}", date.to_string());
+///    }
+///    Err(_) => {
+///     eprintln!("Failed to convert to Bengali date");
+///    }
+///   }
+///  }
+///  Err(_) => {
+///   eprintln!("The date is not a valid greogrian date");
+///  }
+/// }
 /// ```
 /// # Note
-/// * The function will return `Date::Invalid` if the gregorian date is invalid
-/// 
+/// * The function will return `DateError` if the conversion fails
 pub fn get_bengali_date_from_gregorian(english_date: EnglishDate) -> Result<Date, DateError> {
     let bengali_date = gregorian_to_bengali_date(english_date);
     Ok(bengali_date)
