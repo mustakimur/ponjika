@@ -4,7 +4,8 @@
 //! The `EnglishDate` and `BengaliDate` struct variants are the English and Bengali dates respectively.
 //! The `DateError` enum is used to represent the error when the date is invalid.
 
-use std::fmt;
+use std::fmt::{self};
+use std::num::TryFromIntError;
 
 use chrono::{Datelike, TimeZone, Utc, Weekday};
 
@@ -12,19 +13,36 @@ use crate::days::{BengaliWeekDays, EnglishWeekDays, WeekDayError, WeekDays};
 use crate::months::{BengaliMonths, EnglishMonths, Month};
 use crate::MonthError;
 
-/// # The enum `DateError` is used to represent the error when the date is invalid.
+/// # `DateError`: The error enum for the dates.
 /// The enum variant is the error message.
 #[derive(Debug)]
 pub enum DateError {
-    UnknownDate,                // The date is unknown
-    WrongWeekDay(WeekDayError), // The week day in the date was wrong
-    WrongMonth(MonthError),     // The month in the date was wrong
-    WrongDay,                   // The day in the date was wrong
-    WrongYear,                  // The year in the date was wrong
-    NumToCharError,             // Failed to convert number to character
+    /// The UnknownDate variant is used when the date is invalid.
+    UnknownDate,
+    /// The WrongWeekDay variant is used when the week day is invalid.
+    WrongWeekDay(WeekDayError),
+    /// The WrongMonth variant is used when the month is invalid.
+    WrongMonth(MonthError),
+    /// The WrongDay variant is used when the day is invalid.
+    WrongDay,
+    /// The WrongYear variant is used when the year is invalid.
+    WrongYear,
+    /// The NumToCharError variant is used when the number to character conversion failed.
+    NumToCharError,
+    /// The CastingError variant is used when the casting failed.
+    CastingError(TryFromIntError),
 }
 
 impl std::fmt::Display for DateError {
+    /// Display the error message
+    /// # Returns
+    /// * `fmt::Result` - The error message
+    /// # Example
+    /// ```
+    /// use ponjika::date::DateError;
+    /// let error = DateError::UnknownDate;
+    /// println!("{}", error);
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             DateError::UnknownDate => write!(f, "DateError: Unknown date"),
@@ -39,17 +57,22 @@ impl std::fmt::Display for DateError {
             DateError::NumToCharError => {
                 write!(f, "DateError: Failed to convert number to character")
             }
+            DateError::CastingError(err) => write!(f, "DateError: Failed to cast the number: {}", err),
         }
     }
 }
 
+// Use the Result type to handle the error for the dates
 type DateResult = Result<(String, String, String, String), DateError>;
 
-/// The enum `Date` is used to represent both English and Bengali dates.
-/// The invalid variant is used when the date is invalid.
+/// # `Date`: The enum for the dates.
+/// The enum variants are the English and Bengali dates.
 pub enum Date {
+    /// The English variant is used to represent the English dates.
     English(EnglishDate),
+    /// The Bengali variant is used to represent the Bengali dates.
     Bengali(BengaliDate),
+    /// The Unknown variant is used when the date is invalid.
     Unknown,
 }
 
@@ -133,6 +156,12 @@ impl Date {
 }
 
 impl fmt::Display for Date {
+    /// Display the date
+    /// # Returns
+    /// * `fmt::Result` - The date
+    /// # Example
+    /// ```
+    /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Date::English(date) => write!(
@@ -156,7 +185,8 @@ impl fmt::Display for Date {
     }
 }
 
-/// The struct `EnglishDate` is used to represent the English date.
+/// # `EnglishDate`: The struct for the English date.
+/// The struct is used to represent the English date.
 #[derive(Debug)]
 pub struct EnglishDate {
     day: u8,
@@ -167,6 +197,19 @@ pub struct EnglishDate {
 }
 
 impl EnglishDate {
+    /// Check if the date is valid
+    /// # Arguments
+    /// * `day` - u8
+    /// * `month` - u8
+    /// * `year` - u16
+    /// # Returns
+    /// * `Result<bool>` - The result of the date validation
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return `Ok(true)` if the date is valid
+    /// * The function will return `Err(DateError)` if the date is invalid
     fn is_valid_date(day: u8, month: u8, year: u16) -> Result<bool, DateError> {
         if day < 1 || day > 31 {
             return Err(DateError::WrongDay);
@@ -225,7 +268,7 @@ impl EnglishDate {
     /// ```
     /// # Note
     /// * The function will return the English date
-    /// * The function will return `Date::Invalid` if the date is invalid
+    /// * The function will return `DateError` if there is an error
     pub fn create_date(day: u8, month: EnglishMonths, year: u16) -> Result<Self, DateError> {
         let month_index = month.map_to_index();
         match Self::is_valid_date(day, month_index, year) {
@@ -296,7 +339,7 @@ impl EnglishDate {
     /// ```
     /// # Note
     /// * The function will return the week day of the date
-    /// * The function will return "WeekDayError: Unknown week days" if the week day is invalid
+    /// * The function will return `WeekDayError` if there is an error
     pub fn get_week_day(&self) -> Result<String, WeekDayError> {
         self.week_day.get_week_day()
     }
@@ -309,7 +352,7 @@ impl EnglishDate {
     /// ```
     /// # Note
     /// * The function will return the month of the date
-    /// * The function will return "MonthError: Unknown month" if the month is invalid
+    /// * The function will return `MonthError` if there is an error
     pub fn get_month(&self) -> Result<String, MonthError> {
         self.month_name.get_month_name()
     }
@@ -322,13 +365,18 @@ impl EnglishDate {
     /// ```
     /// # Note
     /// * The function will return the year of the date
-    /// * The function will return "DateError: Failed to convert number to character" if the year is invalid
     pub fn get_year(&self) -> String {
         self.year.to_string()
     }
 }
 
 impl fmt::Display for EnglishDate {
+    /// Display the date
+    /// # Returns
+    /// * `fmt::Result` - The date
+    /// # Example
+    /// ```
+    /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
@@ -341,7 +389,8 @@ impl fmt::Display for EnglishDate {
     }
 }
 
-/// The struct `BengaliDate` is used to represent the Bengali date.
+/// # `BengaliDate`: The struct for the Bengali date.
+/// The struct is used to represent the Bengali date.
 #[derive(Debug)]
 pub struct BengaliDate {
     day: u8,
@@ -352,6 +401,19 @@ pub struct BengaliDate {
 }
 
 impl BengaliDate {
+    /// Check if the date is valid
+    /// # Arguments
+    /// * `day` - u8
+    /// * `month` - u8
+    /// * `year` - u16
+    /// # Returns
+    /// * `Result<bool>` - The result of the date validation
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return `Ok(true)` if the date is valid
+    /// * The function will return `Err(DateError)` if the date is invalid
     fn is_valid_date(day: u8, month: u8, year: u16) -> Result<bool, DateError> {
         if day < 1 || day > 31 {
             return Err(DateError::WrongDay);
@@ -361,7 +423,7 @@ impl BengaliDate {
             return Err(DateError::WrongYear);
         }
 
-        match month % 4 {
+        match month % 4 {  // leap year
             0 => match month {
                 1 => Ok(day <= 31),
                 2 => Ok(day <= 31),
@@ -408,7 +470,7 @@ impl BengaliDate {
     /// ```
     /// # Note
     /// * The function will return the Bengali date
-    /// * The function will return `Date::Invalid` if the date is invalid
+    /// * The function will return `DateError` if the date is invalid
     pub fn create_date_with_weekday(
         day: u8,
         week_day: BengaliWeekDays,
@@ -446,7 +508,7 @@ impl BengaliDate {
     /// ```
     /// # Note
     /// * The function will return the Bengali date
-    /// * The function will return `Date::Invalid` if the date is invalid
+    /// * The function will return `DateError` if the date is invalid
     pub fn create_date(day: u8, month: BengaliMonths, year: u16) -> Result<Self, DateError> {
         let month_index = month.map_to_index();
         match Self::is_valid_date(day, month_index, year) {
@@ -556,6 +618,12 @@ impl BengaliDate {
 }
 
 impl fmt::Display for BengaliDate {
+    /// Display the date
+    /// # Returns
+    /// * `fmt::Result` - The date
+    /// # Example
+    /// ```
+    /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,

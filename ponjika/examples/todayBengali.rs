@@ -1,13 +1,13 @@
 use ponjika::*;
 fn main() {
-    let today = get_today_bengali_calendar();
+    let today = get_today_bengali_date();
     match today {
-        Date::Unknown => {
-            eprintln!("The system return an invalid date");
-            return;
+        Ok(bengali_date) => {
+            println!("{}", bengali_date.to_string());
         }
-        _ => {
-            //println!("{}", format_date_with_weekday(today));
+        Err(_) => {
+            eprintln!("The date is not a valid greogrian date");
+            return;
         }
     }
 }

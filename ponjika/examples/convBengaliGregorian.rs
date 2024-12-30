@@ -6,12 +6,12 @@ fn main() {
         Ok(english_date) => {
             let bengali_date = get_bengali_date_from_gregorian(english_date);
             match bengali_date {
-                Date::Unknown => {
+                Ok(date) => {
+                    println!("{}", date.to_string());
+                }
+                Err(_) => {
                     eprintln!("Failed to convert to Bengali date");
                     return;
-                }
-                _ => {
-                    //println!("{}", format_date(bengali_date));
                 }
             }
         }
