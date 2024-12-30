@@ -2,18 +2,47 @@
 //! The `date` module is used to represent both English and Bengali dates.
 //! The `Date` enum is used to represent both English and Bengali dates.
 //! The `EnglishDate` and `BengaliDate` struct variants are the English and Bengali dates respectively.
+//! The `DateError` enum is used to represent the error when the date is invalid.
 
 use chrono::{Datelike, TimeZone, Utc, Weekday};
 
-use crate::days::{BengaliWeekDays, EnglishWeekDays, WeekDays};
+use crate::days::{BengaliWeekDays, EnglishWeekDays, WeekDayError, WeekDays};
 use crate::months::{BengaliMonths, EnglishMonths, Month};
+use crate::MonthError;
+
+#[derive(Debug)]
+pub enum DateError {
+    UnknownDate,
+    WrongWeekDay(WeekDayError),
+    WrongMonth(MonthError),
+    WrongDay,
+    WrongYear,
+}
+
+impl std::fmt::Display for DateError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            DateError::UnknownDate => write!(f, "DateError: Unknown date"),
+            DateError::WrongWeekDay(err) => {
+                write!(f, "DateError: The week day in the date was wrong: {}", err)
+            }
+            DateError::WrongMonth(err) => {
+                write!(f, "DateError: The month in the date was wrong: {}", err)
+            }
+            DateError::WrongDay => write!(f, "DateError: The day in the date was wrong"),
+            DateError::WrongYear => write!(f, "DateError: The year in the date was wrong"),
+        }
+    }
+}
+
+type DateResult = Result<(String, String, String, String), DateError>;
 
 /// The enum `Date` is used to represent both English and Bengali dates.
 /// The invalid variant is used when the date is invalid.
 pub enum Date {
     English(EnglishDate),
     Bengali(BengaliDate),
-    Invalid,
+    Unknown,
 }
 
 impl Date {
@@ -22,9 +51,6 @@ impl Date {
     /// * `Option<EnglishDate>` - The English date
     /// # Example
     /// ```
-    /// use ponjika::date::EnglishDate;
-    /// let date = EnglishDate::create_date(14, 4, 2021);
-    /// assert_eq!(date.get_english_date().unwrap().get_day(), "14");
     /// ```
     /// # Note
     /// * The function will return the English date
@@ -41,9 +67,6 @@ impl Date {
     /// * `Option<BengaliDate>` - The Bengali date
     /// # Example
     /// ```
-    /// use ponjika::date::BengaliDate;
-    /// let date = BengaliDate::create_date(1, 1, 1427);
-    /// assert_eq!(date.get_bengali_date().unwrap().get_day(), "১");
     /// ```
     /// # Note
     /// * The function will return the Bengali date
@@ -60,78 +83,37 @@ impl Date {
     /// * `String` - The day of the date
     /// # Example
     /// ```
-    /// use ponjika::date::EnglishDate;
-    /// let date = EnglishDate::create_date(14, 4, 2021);
-    /// assert_eq!(date.get_day(), "14");
     /// ```
     /// # Note
     /// * The function will return the day of the date
     /// * The function will return "DateError: The day in the date was wrong" if the day is invalid
-    pub fn get_day(&self) -> String {
+    pub fn get_day(&self) -> DateResult {
         match self {
-            Date::English(date) => date.get_day(),
-            Date::Bengali(date) => date.get_day(),
-            Date::Invalid => "DateError: The day in the date was wrong".to_string(),
-        }
-    }
-
-    /// Get the week day of the selected date
-    /// # Returns
-    /// * `String` - The week day of the date
-    /// # Example
-    /// ```
-    /// use ponjika::date::EnglishDate;
-    /// let date = EnglishDate::create_date(14, 4, 2021);
-    /// assert_eq!(date.get_week_day(), "Wednesday");
-    /// ```
-    /// # Note
-    /// * The function will return the week day of the date
-    /// * The function will return "DateError: The week day in the date was wrong" if the week day is invalid
-    pub fn get_week_day(&self) -> String {
-        match self {
-            Date::English(date) => date.get_week_day().to_string(),
-            Date::Bengali(date) => date.get_week_day().to_string(),
-            Date::Invalid => "DateError: The week day in the date was wrong".to_string(),
-        }
-    }
-
-    /// Get the month of the selected date
-    /// # Returns
-    /// * `String` - The month of the date
-    /// # Example
-    /// ```
-    /// use ponjika::date::EnglishDate;
-    /// let date = EnglishDate::create_date(14, 4, 2021);
-    /// assert_eq!(date.get_month(), "April");
-    /// ```
-    /// # Note
-    /// * The function will return the month of the date
-    /// * The function will return "DateError: The month in the date was wrong" if the month is invalid
-    pub fn get_month(&self) -> String {
-        match self {
-            Date::English(date) => date.get_month(),
-            Date::Bengali(date) => date.get_month(),
-            Date::Invalid => "DateError: The month in the date was wrong".to_string(),
-        }
-    }
-
-    /// Get the year of the selected date
-    /// # Returns
-    /// * `String` - The year of the date
-    /// # Example
-    /// ```
-    /// use ponjika::date::EnglishDate;
-    /// let date = EnglishDate::create_date(14, 4, 2021);
-    /// assert_eq!(date.get_year(), "2021");
-    /// ```
-    /// # Note
-    /// * The function will return the year of the date
-    /// * The function will return "DateError: The year in the date was wrong" if the year is invalid
-    pub fn get_year(&self) -> String {
-        match self {
-            Date::English(date) => date.get_year(),
-            Date::Bengali(date) => date.get_year(),
-            Date::Invalid => "DateError: The year in the date was wrong".to_string(),
+            Date::English(date) => Ok((
+                date.get_day(),
+                match date.get_week_day() {
+                    Ok(week_day) => week_day,
+                    Err(err) => return Err(DateError::WrongWeekDay(err)),
+                },
+                match date.get_month() {
+                    Ok(month) => month,
+                    Err(err) => return Err(DateError::WrongMonth(err)),
+                },
+                date.get_year(),
+            )),
+            Date::Bengali(date) => Ok((
+                date.get_day(),
+                match date.get_week_day() {
+                    Ok(week_day) => week_day,
+                    Err(err) => return Err(DateError::WrongWeekDay(err)),
+                },
+                match date.get_month() {
+                    Ok(month) => month,
+                    Err(err) => return Err(DateError::WrongMonth(err)),
+                },
+                date.get_year(),
+            )),
+            Date::Unknown => Err(DateError::UnknownDate),
         }
     }
 }
@@ -147,41 +129,45 @@ pub struct EnglishDate {
 }
 
 impl EnglishDate {
-    fn is_valid_date(day: u8, month: u8, year: u16) -> bool {
-        if day == 0 || month == 0 || year < 593 || year > 9999 {
-            return false;
+    fn is_valid_date(day: u8, month: u8, year: u16) -> Result<bool, DateError> {
+        if day < 1 || day > 31 {
+            return Err(DateError::WrongDay);
+        }
+
+        if year < 593 || year > 9999 {
+            return Err(DateError::WrongYear);
         }
 
         match year % 4 {
             0 => match month {
-                1 => day <= 31,
-                2 => day <= 29,
-                3 => day <= 31,
-                4 => day <= 30,
-                5 => day <= 31,
-                6 => day <= 30,
-                7 => day <= 31,
-                8 => day <= 31,
-                9 => day <= 30,
-                10 => day <= 31,
-                11 => day <= 30,
-                12 => day <= 31,
-                _ => false,
+                1 => Ok(day <= 31),
+                2 => Ok(day <= 29),
+                3 => Ok(day <= 31),
+                4 => Ok(day <= 30),
+                5 => Ok(day <= 31),
+                6 => Ok(day <= 30),
+                7 => Ok(day <= 31),
+                8 => Ok(day <= 31),
+                9 => Ok(day <= 30),
+                10 => Ok(day <= 31),
+                11 => Ok(day <= 30),
+                12 => Ok(day <= 31),
+                _ => Err(DateError::WrongMonth(MonthError::WrongRange)),
             },
             _ => match month {
-                1 => day <= 31,
-                2 => day <= 28,
-                3 => day <= 31,
-                4 => day <= 30,
-                5 => day <= 31,
-                6 => day <= 30,
-                7 => day <= 31,
-                8 => day <= 31,
-                9 => day <= 30,
-                10 => day <= 31,
-                11 => day <= 30,
-                12 => day <= 31,
-                _ => false,
+                1 => Ok(day <= 31),
+                2 => Ok(day <= 28),
+                3 => Ok(day <= 31),
+                4 => Ok(day <= 30),
+                5 => Ok(day <= 31),
+                6 => Ok(day <= 30),
+                7 => Ok(day <= 31),
+                8 => Ok(day <= 31),
+                9 => Ok(day <= 30),
+                10 => Ok(day <= 31),
+                11 => Ok(day <= 30),
+                12 => Ok(day <= 31),
+                _ => Err(DateError::WrongMonth(MonthError::WrongRange)),
             },
         }
     }
@@ -196,16 +182,21 @@ impl EnglishDate {
     /// # Example
     /// ```
     /// use ponjika::date::EnglishDate;
-    /// let date = EnglishDate::create_date(14, 4, 2021);
-    /// assert_eq!(date.get_english_date().unwrap().get_day(), "14");
+    /// use ponjika::months::EnglishMonths;
+    /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021);
     /// ```
     /// # Note
     /// * The function will return the English date
     /// * The function will return `Date::Invalid` if the date is invalid
-    pub fn create_date(day: u8, month: EnglishMonths, year: u16) -> Option<Self> {
-        let month_index = month.map_month_to_index();
-        if !Self::is_valid_date(day, month_index, year) {
-            return None;
+    pub fn create_date(day: u8, month: EnglishMonths, year: u16) -> Result<Self, DateError> {
+        let month_index = month.map_to_index();
+        match Self::is_valid_date(day, month_index, year) {
+            Ok(valid) => {
+                if !valid {
+                    return Err(DateError::UnknownDate);
+                }
+            }
+            Err(err) => return Err(err),
         }
 
         let week_day = match year {
@@ -223,10 +214,10 @@ impl EnglishDate {
                     Weekday::Sun => WeekDays::English(EnglishWeekDays::Sunday),
                 }
             }
-            _ => return None,
+            _ => return Err(DateError::WrongWeekDay(WeekDayError::FailedDateTimes)),
         };
 
-        Some(EnglishDate {
+        Ok(EnglishDate {
             day,
             week_day,
             month: month_index,
@@ -243,12 +234,12 @@ impl EnglishDate {
         self.day
     }
 
-    pub fn get_week_day(&self) -> String {
-        self.week_day.get_week_name().to_string()
+    pub fn get_week_day(&self) -> Result<String, WeekDayError> {
+        self.week_day.get_week_day()
     }
 
-    pub fn get_month(&self) -> String {
-        self.month_name.get_month_name().to_string()
+    pub fn get_month(&self) -> Result<String, MonthError> {
+        self.month_name.get_month_name()
     }
 
     pub fn get_month_number(&self) -> u8 {
@@ -275,41 +266,45 @@ pub struct BengaliDate {
 }
 
 impl BengaliDate {
-    fn is_valid_date(day: u8, month: u8, year: u16) -> bool {
-        if day == 0 || month == 0 || year < 1 || year > 8568 {
-            return false;
+    fn is_valid_date(day: u8, month: u8, year: u16) -> Result<bool, DateError> {
+        if day < 1 || day > 31 {
+            return Err(DateError::WrongDay);
         }
 
+        if year < 1 || year > 8568 {
+            return Err(DateError::WrongYear);
+        }
+        
         match month % 4 {
             0 => match month {
-                1 => day <= 31,
-                2 => day <= 31,
-                3 => day <= 31,
-                4 => day <= 31,
-                5 => day <= 31,
-                6 => day <= 30,
-                7 => day <= 30,
-                8 => day <= 30,
-                9 => day <= 30,
-                10 => day <= 30,
-                11 => day <= 30,
-                12 => day <= 30,
-                _ => false,
+                1 => Ok(day <= 31),
+                2 => Ok(day <= 31),
+                3 => Ok(day <= 31),
+                4 => Ok(day <= 31),
+                5 => Ok(day <= 31),
+                6 => Ok(day <= 30),
+                7 => Ok(day <= 30),
+                8 => Ok(day <= 30),
+                9 => Ok(day <= 30),
+                10 => Ok(day <= 30),
+                11 => Ok(day <= 30),
+                12 => Ok(day <= 30),
+                _ => Err(DateError::WrongMonth(MonthError::WrongRange)),
             },
             _ => match month {
-                1 => day <= 31,
-                2 => day <= 31,
-                3 => day <= 31,
-                4 => day <= 31,
-                5 => day <= 31,
-                6 => day <= 30,
-                7 => day <= 30,
-                8 => day <= 30,
-                9 => day <= 30,
-                10 => day <= 30,
-                11 => day <= 31,
-                12 => day <= 30,
-                _ => false,
+                1 => Ok(day <= 31),
+                2 => Ok(day <= 31),
+                3 => Ok(day <= 31),
+                4 => Ok(day <= 31),
+                5 => Ok(day <= 31),
+                6 => Ok(day <= 30),
+                7 => Ok(day <= 30),
+                8 => Ok(day <= 30),
+                9 => Ok(day <= 30),
+                10 => Ok(day <= 30),
+                11 => Ok(day <= 31),
+                12 => Ok(day <= 30),
+                _ => Err(DateError::WrongMonth(MonthError::WrongRange)),
             },
         }
     }
@@ -324,21 +319,27 @@ impl BengaliDate {
     /// * `Date` - The Bengali date
     /// # Example
     /// ```
-    /// use ponjika::date::BengaliDate;
-    /// use ponjika::days::BengaliWeekDays;
-    /// let date = BengaliDate::create_bengali_date(1, BengaliWeekDays::Robibar, 1, 1427);
-    /// assert_eq!(date.get_bengali_date().unwrap().get_day(), "১");
     /// ```
     /// # Note
     /// * The function will return the Bengali date
     /// * The function will return `Date::Invalid` if the date is invalid
-    pub fn create_bengali_date(day: u8, week_day: BengaliWeekDays, month: BengaliMonths, year: u16) -> Date {
-        let month_index = month.map_month_to_index();
-        if !Self::is_valid_date(day, month_index, year) {
-            return Date::Invalid;
+    pub fn create_bengali_date(
+        day: u8,
+        week_day: BengaliWeekDays,
+        month: BengaliMonths,
+        year: u16,
+    ) -> Result<Self, DateError> {
+        let month_index = month.map_to_index();
+        match Self::is_valid_date(day, month_index, year) {
+            Ok(valid) => {
+                if !valid {
+                    return Err(DateError::UnknownDate);
+                }
+            }
+            Err(err) => return Err(err),
         }
 
-        Date::Bengali(BengaliDate {
+        Ok(BengaliDate {
             day,
             week_day: WeekDays::Bengali(week_day),
             month: month_index,
@@ -356,17 +357,19 @@ impl BengaliDate {
     /// * `Date` - The Bengali date
     /// # Example
     /// ```
-    /// use ponjika::date::BengaliDate;
-    /// let date = BengaliDate::create_date(1, 1, 1427);
-    /// assert_eq!(date.get_bengali_date().unwrap().get_day(), "১");
     /// ```
     /// # Note
     /// * The function will return the Bengali date
     /// * The function will return `Date::Invalid` if the date is invalid
-    pub fn create_date(day: u8, month: BengaliMonths, year: u16) -> Option<Self> {
-        let month_index = month.map_month_to_index();
-        if !Self::is_valid_date(day, month_index, year) {
-            return None;
+    pub fn create_date(day: u8, month: BengaliMonths, year: u16) -> Result<Self, DateError> {
+        let month_index = month.map_to_index();
+        match Self::is_valid_date(day, month_index, year) {
+            Ok(valid) => {
+                if !valid {
+                    return Err(DateError::UnknownDate);
+                }
+            }
+            Err(_) => return Err(DateError::UnknownDate),
         }
 
         let week_day = match year {
@@ -384,10 +387,10 @@ impl BengaliDate {
                     Weekday::Sun => WeekDays::Bengali(BengaliWeekDays::Robibar),
                 }
             }
-            _ => return None,
+            _ => return Err(DateError::WrongWeekDay(WeekDayError::FailedDateTimes)),
         };
 
-        Some(BengaliDate {
+        Ok(BengaliDate {
             day,
             week_day,
             month: month_index,
@@ -422,11 +425,11 @@ impl BengaliDate {
             .collect()
     }
 
-    pub fn get_week_day(&self) -> String {
-        self.week_day.get_week_name().to_string()
+    pub fn get_week_day(&self) -> Result<String, WeekDayError> {
+        self.week_day.get_week_day()
     }
 
-    pub fn get_month(&self) -> String {
-        self.month_name.get_month_name().to_string()
+    pub fn get_month(&self) -> Result<String, MonthError> {
+        self.month_name.get_month_name()
     }
 }

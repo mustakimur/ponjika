@@ -131,14 +131,17 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
     }
 
     let bengali_weekday =
-        BengaliWeekDays::map_to_english_weekday(english_date.get_week_day().as_str());
+        BengaliWeekDays::map_to_english_weekday(english_date.get_week_day().unwrap().as_str());
 
-    BengaliDate::create_bengali_date(
+    match BengaliDate::create_bengali_date(
         bengali_day,
         bengali_weekday.unwrap(),
         BengaliMonths::get_month(bengali_month).unwrap(),
         bengali_year,
-    )
+    ) {
+        Ok(bengali_date) => Date::Bengali(bengali_date),
+        Err(_) => Date::Unknown,
+    }
 }
 
 /// Get today's Bengali date
@@ -160,8 +163,7 @@ pub fn get_today_bengali_calendar() -> Date {
     let today_year = today.year() as u16;
 
     match EnglishMonths::get_month(today_month) {
-        None => return Date::Invalid,
-        Some(month) => {
+        Ok(month) => {
             let english_date = EnglishDate::create_date(
                 today_day,
                 month,
@@ -169,13 +171,15 @@ pub fn get_today_bengali_calendar() -> Date {
             );
 
             match english_date {
-                None => Date::Invalid,
-                Some(date) => {
-                    let bengali_date = gregorian_to_bengali_date(date);
-                    bengali_date
-                }
+                Ok(date) => gregorian_to_bengali_date(date),
+                Err(_) => Date::Unknown,
             }
         }
+        Err(err) => {
+            match err {
+                _=> Date::Unknown,
+            }
+        },
     }
 }
 
@@ -188,9 +192,6 @@ pub fn get_today_bengali_calendar() -> Date {
 /// * `Date` - Bengali date
 /// # Example
 /// ```
-/// use ponjika::get_bengali_date_from_gregorian;
-/// let bengali_date = get_bengali_date_from_gregorian(14, 4, 2021);
-/// println!("{:?}", bengali_date.get_bengali_date().unwrap());
 /// ```
 /// # Note
 /// * The function will return `Date::Invalid` if the gregorian date is invalid

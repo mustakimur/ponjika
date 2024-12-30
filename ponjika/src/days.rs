@@ -2,36 +2,60 @@
 //! The `days` module provides the week day names in English and Bengali.
 //! The `WeekDays` enum is used to represent both English and Bengali week days.
 //! The `EnglishWeekDays` and `BengaliWeekDays` enum variants are the English and Bengali week days respectively.
+//! The `WeekDayError` enum is used to represent the error when the week day is invalid.
+
+use std::fmt;
+
+/// The enum `WeekDayError` is used to represent the error when the week day is invalid.
+/// The enum variant is the error message.
+/// The UnknownWeekDays variant is used when the week day is neither English nor Bengali.
+#[derive(Debug)]
+pub enum WeekDayError {
+    UnknownWeekDays,
+    FailedDateTimes,
+}
+
+impl fmt::Display for WeekDayError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            WeekDayError::UnknownWeekDays => write!(f, "WeekDayError: Unknown week days"),
+            WeekDayError::FailedDateTimes => write!(f, "WeekDayError: Failed to get date and time"),
+        }
+    }
+}
+
+type Result<T> = std::result::Result<T, WeekDayError>;
 
 /// The enum `WeekDays` is used to represent both English and Bengali week days.
-/// The invalid variant is used when the week day is invalid.
+/// The enum variants are the English and Bengali week days.
+/// The WeekDayError variant is used when the week day is invalid.
 #[derive(Debug)]
 pub enum WeekDays {
     English(EnglishWeekDays),
     Bengali(BengaliWeekDays),
-    Invalid,
+    Unknown,
 }
 
 impl WeekDays {
     /// Get the week day name of the selected week day
     /// # Returns
-    /// * `&str` - The name of the week day
+    /// * `Result<String>` - The name of the week day
     /// # Example
     /// ```
     /// use ponjika::days::{WeekDays, EnglishWeekDays, BengaliWeekDays};
     /// let week_day = WeekDays::English(EnglishWeekDays::Sunday);
-    /// assert_eq!(week_day.get_week_name(), "Sunday");
+    /// assert_eq!(week_day.get_week_day().unwrap(), "Sunday");
     /// let week_day = WeekDays::Bengali(BengaliWeekDays::Robibar);
-    /// assert_eq!(week_day.get_week_name(), "রবিবার");
+    /// assert_eq!(week_day.get_week_day().unwrap(), "রবিবার");
     /// ```
     /// # Note
     /// * The function will return the name of the week day
-    /// * The function will return "WeekDayError: The week day in the date was wrong" if the week day is invalid
-    pub fn get_week_name(&self) -> &str {
+    /// * The function will return "WeekDayError: Unknown week days" if the week day is invalid
+    pub fn get_week_day(&self) -> Result<String> {
         match self {
-            WeekDays::English(day) => day.get_name(),
-            WeekDays::Bengali(day) => day.get_name(),
-            WeekDays::Invalid => "WeekDayError: The week day in the date was wrong",
+            WeekDays::English(day) => Ok(day.to_string()),
+            WeekDays::Bengali(day) => Ok(day.to_string()),
+            WeekDays::Unknown => Err(WeekDayError::UnknownWeekDays),
         }
     }
 }
@@ -50,18 +74,6 @@ pub enum EnglishWeekDays {
 }
 
 impl EnglishWeekDays {
-    fn get_name(&self) -> &str {
-        match self {
-            EnglishWeekDays::Sunday => "Sunday",
-            EnglishWeekDays::Monday => "Monday",
-            EnglishWeekDays::Tuesday => "Tuesday",
-            EnglishWeekDays::Wednesday => "Wednesday",
-            EnglishWeekDays::Thursday => "Thursday",
-            EnglishWeekDays::Friday => "Friday",
-            EnglishWeekDays::Saturday => "Saturday",
-        }
-    }
-
     /// Map the English week day to the Bengali week day
     /// # Returns
     /// * `BengaliWeekDays` - The Bengali week day
@@ -102,7 +114,8 @@ impl EnglishWeekDays {
     /// ```
     /// # Note
     /// * The function will return the English week day
-    pub fn map_to_english_weekday(week_day: &str) -> Option<EnglishWeekDays> {
+    /// * The function will return None if the week day is invalid
+    pub fn map_to_english_weekday(week_day: &str) -> Option<Self> {
         match week_day {
             "রবিবার" => Some(EnglishWeekDays::Sunday),
             "সোমবার" => Some(EnglishWeekDays::Monday),
@@ -113,6 +126,21 @@ impl EnglishWeekDays {
             "শনিবার" => Some(EnglishWeekDays::Saturday),
             _ => None,
         }
+    }
+}
+
+impl fmt::Display for EnglishWeekDays {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let day_str = match self {
+            EnglishWeekDays::Sunday => "Sunday",
+            EnglishWeekDays::Monday => "Monday",
+            EnglishWeekDays::Tuesday => "Tuesday",
+            EnglishWeekDays::Wednesday => "Wednesday",
+            EnglishWeekDays::Thursday => "Thursday",
+            EnglishWeekDays::Friday => "Friday",
+            EnglishWeekDays::Saturday => "Saturday",
+        };
+        write!(f, "{}", day_str)
     }
 }
 
@@ -130,18 +158,6 @@ pub enum BengaliWeekDays {
 }
 
 impl BengaliWeekDays {
-    fn get_name(&self) -> &str {
-        match self {
-            BengaliWeekDays::Robibar => "রবিবার",
-            BengaliWeekDays::Sombar => "সোমবার",
-            BengaliWeekDays::Mongolbar => "মঙ্গলবার",
-            BengaliWeekDays::Budhbar => "বুধবার",
-            BengaliWeekDays::Brihoshpotibar => "বৃহস্পতিবার",
-            BengaliWeekDays::Shukrobar => "শুক্রবার",
-            BengaliWeekDays::Shonibar => "শনিবার",
-        }
-    }
-
     /// Map the Bengali week day to the English week day
     /// # Returns
     /// * `EnglishWeekDays` - The English week day
@@ -182,7 +198,8 @@ impl BengaliWeekDays {
     /// ```
     /// # Note
     /// * The function will return the Bengali week day
-    pub fn map_to_english_weekday(week_day: &str) -> Option<BengaliWeekDays> {
+    /// * The function will return None if the week day is invalid
+    pub fn map_to_english_weekday(week_day: &str) -> Option<Self> {
         match week_day {
             "Sunday" => Some(BengaliWeekDays::Robibar),
             "Monday" => Some(BengaliWeekDays::Sombar),
@@ -193,5 +210,20 @@ impl BengaliWeekDays {
             "Saturday" => Some(BengaliWeekDays::Shonibar),
             _ => None,
         }
+    }
+}
+
+impl fmt::Display for BengaliWeekDays {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let day_str = match self {
+            BengaliWeekDays::Robibar => "রবিবার",
+            BengaliWeekDays::Sombar => "সোমবার",
+            BengaliWeekDays::Mongolbar => "মঙ্গলবার",
+            BengaliWeekDays::Budhbar => "বুধবার",
+            BengaliWeekDays::Brihoshpotibar => "বৃহস্পতিবার",
+            BengaliWeekDays::Shukrobar => "শুক্রবার",
+            BengaliWeekDays::Shonibar => "শনিবার",
+        };
+        write!(f, "{}", day_str)
     }
 }
