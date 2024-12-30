@@ -17,6 +17,7 @@ pub enum DateError {
     WrongMonth(MonthError),
     WrongDay,
     WrongYear,
+    NumToCharError,
 }
 
 impl std::fmt::Display for DateError {
@@ -31,6 +32,7 @@ impl std::fmt::Display for DateError {
             }
             DateError::WrongDay => write!(f, "DateError: The day in the date was wrong"),
             DateError::WrongYear => write!(f, "DateError: The year in the date was wrong"),
+            DateError::NumToCharError => write!(f, "DateError: Failed to convert number to character"),
         }
     }
 }
@@ -102,7 +104,10 @@ impl Date {
                 date.get_year(),
             )),
             Date::Bengali(date) => Ok((
-                date.get_day(),
+                match date.get_day() {
+                    Ok(day) => day,
+                    Err(err) => return Err(err),
+                },
                 match date.get_week_day() {
                     Ok(week_day) => week_day,
                     Err(err) => return Err(DateError::WrongWeekDay(err)),
@@ -111,7 +116,10 @@ impl Date {
                     Ok(month) => month,
                     Err(err) => return Err(DateError::WrongMonth(err)),
                 },
-                date.get_year(),
+                match date.get_year() {
+                    Ok(year) => year,
+                    Err(err) => return Err(err),
+                },
             )),
             Date::Unknown => Err(DateError::UnknownDate),
         }
@@ -274,7 +282,7 @@ impl BengaliDate {
         if year < 1 || year > 8568 {
             return Err(DateError::WrongYear);
         }
-        
+
         match month % 4 {
             0 => match month {
                 1 => Ok(day <= 31),
@@ -399,28 +407,31 @@ impl BengaliDate {
         })
     }
 
-    pub fn get_day(&self) -> String {
+    pub fn get_day(&self) -> Result<String, DateError> {
         let bengali_digits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-
         self.day
             .to_string()
             .chars()
             .map(|c| {
-                let digit = c.to_digit(10).expect("DateError: Invalid digit");
-                bengali_digits[digit as usize]
+                match c.to_digit(10) {
+                    Some(digit) => Ok(bengali_digits[digit as usize]),
+                    None => return Err(DateError::NumToCharError),
+                }
             })
             .collect()
     }
 
-    pub fn get_year(&self) -> String {
+    pub fn get_year(&self) -> Result<String, DateError> {
         let bengali_digits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
 
         self.year
             .to_string()
             .chars()
             .map(|c| {
-                let digit = c.to_digit(10).expect("DateError: Invalid digit");
-                bengali_digits[digit as usize]
+                match c.to_digit(10) {
+                    Some(digit) => Ok(bengali_digits[digit as usize]),
+                    None => return Err(DateError::NumToCharError),
+                }
             })
             .collect()
     }
