@@ -57,7 +57,9 @@ impl std::fmt::Display for DateError {
             DateError::NumToCharError => {
                 write!(f, "DateError: Failed to convert number to character")
             }
-            DateError::CastingError(err) => write!(f, "DateError: Failed to cast the number: {}", err),
+            DateError::CastingError(err) => {
+                write!(f, "DateError: Failed to cast the number: {}", err)
+            }
         }
     }
 }
@@ -282,9 +284,18 @@ impl EnglishDate {
 
         let week_day = match year {
             593..=9999 => {
-                let date = Utc
-                    .with_ymd_and_hms(year as i32, month_index as u32, day as u32, 0, 0, 0)
-                    .unwrap();
+                let date = match Utc.with_ymd_and_hms(
+                    year as i32,
+                    month_index as u32,
+                    day as u32,
+                    0,
+                    0,
+                    0,
+                ) {
+                    chrono::LocalResult::Single(date) => date,
+                    _ => return Err(DateError::UnknownDate),
+                };
+
                 match date.weekday() {
                     Weekday::Mon => WeekDays::English(EnglishWeekDays::Monday),
                     Weekday::Tue => WeekDays::English(EnglishWeekDays::Tuesday),
@@ -423,7 +434,8 @@ impl BengaliDate {
             return Err(DateError::WrongYear);
         }
 
-        match month % 4 {  // leap year
+        match month % 4 {
+            // leap year
             0 => match month {
                 1 => Ok(day <= 31),
                 2 => Ok(day <= 31),
