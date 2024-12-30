@@ -6,13 +6,26 @@
 
 use std::fmt;
 
+/// # `MonthError`: The error enum for the months.
+/// The enum variants are the error messages for the months.
 #[derive(Debug)]
 pub enum MonthError {
+    /// The UnknownMonth variant is used when the month is neither English nor Bengali.
     UnknownMonth,
+    /// The WrongRange variant is used when the month is not between 1 and 12.
     WrongRange,
 }
 
 impl std::fmt::Display for MonthError {
+    /// Display the error message
+    /// # Returns
+    /// * `fmt::Result` - The error message
+    /// # Example
+    /// ```
+    /// use ponjika::months::MonthError;
+    /// let error = MonthError::UnknownMonth;
+    /// println!("{}", error);
+    /// ```
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             MonthError::UnknownMonth => write!(f, "MonthError: Unknown month"),
@@ -21,14 +34,18 @@ impl std::fmt::Display for MonthError {
     }
 }
 
+// Use the Result type to handle the error for the months
 type Result<T> = std::result::Result<T, MonthError>;
 
-/// The enum `Month` is used to represent both English and Bengali months.
-/// The invalid variant is used when the month is invalid.
+/// # `Month`: The enum for the months.
+/// The enum variants are the English and Bengali months.
 #[derive(Debug)]
 pub enum Month {
+    /// The English variant is used to represent the English months.
     English(EnglishMonths),
+    /// The Bengali variant is used to represent the Bengali months.
     Bengali(BengaliMonths),
+    /// The Unknown variant is used when the month is invalid.
     Unknown,
 }
 
@@ -56,7 +73,7 @@ impl Month {
     }
 }
 
-/// The enum `EnglishMonths` is used to represent the English months.
+/// # `EnglishMonths`: The enum for the English months.
 /// The enum variants are the English months.
 #[derive(Debug)]
 pub enum EnglishMonths {
@@ -91,7 +108,7 @@ impl EnglishMonths {
     /// ```
     /// # Note
     /// * The function will return the `EnglishMonth` enum variant of the selected month
-    /// * The function will return None if the month is invalid
+    /// * The function will return "MonthError: Month should be between 1 and 12" if the month is invalid
     pub fn get_month(month: u8) -> Result<Self> {
         match month {
             1 => Ok(EnglishMonths::January),
@@ -141,6 +158,15 @@ impl EnglishMonths {
 }
 
 impl fmt::Display for EnglishMonths {
+    /// Display the English month name
+    /// # Returns
+    /// * `fmt::Result` - The English month name
+    /// # Example
+    /// ```
+    /// use ponjika::months::EnglishMonths;
+    /// let month = EnglishMonths::January;
+    /// println!("{}", month);
+    /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             EnglishMonths::January => write!(f, "January"),
@@ -159,7 +185,7 @@ impl fmt::Display for EnglishMonths {
     }
 }
 
-/// The enum `BengaliMonths` is used to represent the Bengali months.
+/// # `BengaliMonths`: The enum for the Bengali months.
 /// The enum variants are the Bengali months.
 #[derive(Debug)]
 pub enum BengaliMonths {
@@ -194,7 +220,7 @@ impl BengaliMonths {
     /// ```
     /// # Note
     /// * The function will return the `BengaliMonth` enum variant of the selected month
-    /// * The function will return None if the month is invalid
+    /// * The function will return "MonthError: Month should be between 1 and 12" if the month is invalid
     pub fn get_month(month: u8) -> Result<Self> {
         match month {
             1 => Ok(BengaliMonths::Baishakh),
@@ -244,6 +270,15 @@ impl BengaliMonths {
 }
 
 impl fmt::Display for BengaliMonths {
+    /// Display the Bengali month name
+    /// # Returns
+    /// * `fmt::Result` - The Bengali month name
+    /// # Example
+    /// ```
+    /// use ponjika::months::BengaliMonths;
+    /// let month = BengaliMonths::Baishakh;
+    /// println!("{}", month);
+    /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             BengaliMonths::Baishakh => write!(f, "বৈশাখ"),

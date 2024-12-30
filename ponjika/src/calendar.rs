@@ -6,130 +6,116 @@ use chrono::{Datelike, Local};
 
 use crate::{BengaliDate, BengaliMonths, BengaliWeekDays, Date, EnglishDate, EnglishMonths};
 
+/// checks if the year is a leap year
+/// # Arguments
+/// * `year` - u16
+/// # Returns
+/// * `bool` - true if the year is a leap year
 fn is_leap_year(year: u16) -> bool {
     year % 4 == 0
 }
 
+/// converts Gregorian date to Bengali date
+/// # Arguments
+/// * `english_date` - EnglishDate
+/// # Returns
+/// * `Date` - Bengali date
 fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
-    let english_year = english_date.get_year_number();
-    let english_day = english_date.get_day_number();
-    let english_month = english_date.get_month_number();
+    let (english_day, english_month, english_year) = english_date.get_date();
 
+    // The Bengali year starts from 14th April
+    // If the English date is before 14th April, the Bengali year is the English year - 594
+    // Otherwise, the Bengali year is the English year - 593
     let bengali_year: u16 = if english_month < 4 || (english_month == 4 && english_day < 14) {
-        english_date.get_year_number() - 594
+        english_year - 594
     } else {
-        english_date.get_year_number() - 593
+        english_year - 593
     };
 
-    let mut bengali_day: u8 = 0;
-    let mut bengali_month: u8 = 0;
-    if english_month == 1 {
+    let (bengali_day, bengali_month) = if english_month == 1 {
         if english_day <= 14 {
-            bengali_day = english_day + 16;
-            bengali_month = 9;
+            (english_day + 16, 9)
         } else {
-            bengali_day = english_day - 14;
-            bengali_month = 10;
+            (english_day - 14, 10)
         }
     } else if english_month == 2 {
         if english_day <= 13 {
-            bengali_day = english_day + 17;
-            bengali_month = 10;
+            (english_day + 17, 10)
         } else {
-            bengali_day = english_day - 13;
-            bengali_month = 11;
+            (english_day - 13, 11)
         }
     } else if english_month == 3 {
         if english_day <= 14 {
             if is_leap_year(english_year) {
-                bengali_day = english_day + 16;
-                bengali_month = 11;
+                (english_day + 16, 11)
             } else {
-                bengali_day = english_day + 15;
-                bengali_month = 11;
+                (english_day + 15, 11)
             }
         } else {
-            bengali_day = english_day - 14;
-            bengali_month = 12;
+            (english_day - 14, 12)
         }
     } else if english_month == 4 {
         if english_day <= 13 {
-            bengali_day = english_day + 17;
-            bengali_month = 12;
+            (english_day + 17, 12)
         } else {
-            bengali_day = english_day - 13;
-            bengali_month = 1;
+            (english_day - 13, 1)
         }
     } else if english_month == 5 {
         if english_day <= 14 {
-            bengali_day = english_day + 17;
-            bengali_month = 1;
+            (english_day + 17, 1)
         } else {
-            bengali_day = english_day - 14;
-            bengali_month = 2;
+            (english_day - 14, 2)
         }
     } else if english_month == 6 {
         if english_day <= 14 {
-            bengali_day = english_day + 17;
-            bengali_month = 2;
+            (english_day + 17, 2)
         } else {
-            bengali_day = english_day - 14;
-            bengali_month = 3;
+            (english_day - 14, 3)
         }
     } else if english_month == 7 {
         if english_day <= 15 {
-            bengali_day = english_day + 16;
-            bengali_month = 3;
+            (english_day + 16, 3)
         } else {
-            bengali_day = english_day - 15;
-            bengali_month = 4;
+            (english_day - 15, 4)
         }
     } else if english_month == 8 {
         if english_day <= 15 {
-            bengali_day = english_day + 16;
-            bengali_month = 4;
+            (english_day + 16, 4)
         } else {
-            bengali_day = english_day - 15;
-            bengali_month = 5;
+            (english_day - 15, 5)
         }
     } else if english_month == 9 {
         if english_day <= 15 {
-            bengali_day = english_day + 16;
-            bengali_month = 5;
+            (english_day + 16, 5)
         } else {
-            bengali_day = english_day - 15;
-            bengali_month = 6;
+            (english_day - 15, 6)
         }
     } else if english_month == 10 {
         if english_day <= 16 {
-            bengali_day = english_day + 15;
-            bengali_month = 6;
+            (english_day + 15, 6)
         } else {
-            bengali_day = english_day - 16;
-            bengali_month = 7;
+            (english_day - 16, 7)
         }
     } else if english_month == 11 {
         if english_day <= 15 {
-            bengali_day = english_day + 15;
-            bengali_month = 7;
+            (english_day + 15, 7)
         } else {
-            bengali_day = english_day - 15;
-            bengali_month = 8;
+            (english_day - 15, 8)
         }
     } else if english_month == 12 {
         if english_day <= 15 {
-            bengali_day = english_day + 15;
-            bengali_month = 8;
+            (english_day + 15, 8)
         } else {
-            bengali_day = english_day - 15;
-            bengali_month = 9;
+            (english_day - 15, 9)
         }
-    }
+    } else {
+        (0, 0)
+    };
 
     let bengali_weekday =
-        BengaliWeekDays::map_to_english_weekday(english_date.get_week_day().unwrap().as_str());
+        BengaliWeekDays::get_english_weekday(english_date.get_week_day().unwrap().as_str());
 
-    match BengaliDate::create_bengali_date(
+    match BengaliDate::create_date_with_weekday(
         bengali_day,
         bengali_weekday.unwrap(),
         BengaliMonths::get_month(bengali_month).unwrap(),

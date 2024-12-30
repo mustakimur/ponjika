@@ -12,14 +12,16 @@ use crate::days::{BengaliWeekDays, EnglishWeekDays, WeekDayError, WeekDays};
 use crate::months::{BengaliMonths, EnglishMonths, Month};
 use crate::MonthError;
 
+/// # The enum `DateError` is used to represent the error when the date is invalid.
+/// The enum variant is the error message.
 #[derive(Debug)]
 pub enum DateError {
-    UnknownDate,
-    WrongWeekDay(WeekDayError),
-    WrongMonth(MonthError),
-    WrongDay,
-    WrongYear,
-    NumToCharError,
+    UnknownDate,                // The date is unknown
+    WrongWeekDay(WeekDayError), // The week day in the date was wrong
+    WrongMonth(MonthError),     // The month in the date was wrong
+    WrongDay,                   // The day in the date was wrong
+    WrongYear,                  // The year in the date was wrong
+    NumToCharError,             // Failed to convert number to character
 }
 
 impl std::fmt::Display for DateError {
@@ -93,7 +95,7 @@ impl Date {
     /// # Note
     /// * The function will return the day of the date
     /// * The function will return "DateError: The day in the date was wrong" if the day is invalid
-    pub fn get_day(&self) -> DateResult {
+    pub fn get_date(&self) -> DateResult {
         match self {
             Date::English(date) => Ok((
                 date.get_day(),
@@ -262,32 +264,80 @@ impl EnglishDate {
         })
     }
 
+    /// Get the date in numbers of the selected date
+    /// # Returns
+    /// * `(u8, u8, u16)` - The day, month, and year of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the day, month, and year of the date
+    pub fn get_date(&self) -> (u8, u8, u16) {
+        (self.day, self.month, self.year)
+    }
+
+    /// Get the day of the selected date
+    /// # Returns
+    /// * `String` - The day of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the day of the date
     pub fn get_day(&self) -> String {
         self.day.to_string()
     }
 
-    pub fn get_day_number(&self) -> u8 {
-        self.day
-    }
-
+    /// Get the week day of the selected date
+    /// # Returns
+    /// * `String` - The week day of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the week day of the date
+    /// * The function will return "WeekDayError: Unknown week days" if the week day is invalid
     pub fn get_week_day(&self) -> Result<String, WeekDayError> {
         self.week_day.get_week_day()
     }
 
+    /// Get the month of the selected date
+    /// # Returns
+    /// * `String` - The month of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the month of the date
+    /// * The function will return "MonthError: Unknown month" if the month is invalid
     pub fn get_month(&self) -> Result<String, MonthError> {
         self.month_name.get_month_name()
     }
 
-    pub fn get_month_number(&self) -> u8 {
-        self.month
-    }
-
+    /// Get the year of the selected date
+    /// # Returns
+    /// * `String` - The year of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the year of the date
+    /// * The function will return "DateError: Failed to convert number to character" if the year is invalid
     pub fn get_year(&self) -> String {
         self.year.to_string()
     }
+}
 
-    pub fn get_year_number(&self) -> u16 {
-        self.year
+impl fmt::Display for EnglishDate {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{1}, {0} {2} {3}",
+            self.get_day(),
+            self.get_week_day().unwrap(),
+            self.get_month().unwrap(),
+            self.get_year()
+        )
     }
 }
 
@@ -359,7 +409,7 @@ impl BengaliDate {
     /// # Note
     /// * The function will return the Bengali date
     /// * The function will return `Date::Invalid` if the date is invalid
-    pub fn create_bengali_date(
+    pub fn create_date_with_weekday(
         day: u8,
         week_day: BengaliWeekDays,
         month: BengaliMonths,
@@ -435,6 +485,15 @@ impl BengaliDate {
         })
     }
 
+    /// Get the day of the selected date
+    /// # Returns
+    /// * `Result<String>` - The day of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the day of the date
+    /// * The function will return "DateError: Failed to convert number to character" if the day is invalid
     pub fn get_day(&self) -> Result<String, DateError> {
         let bengali_digits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
         self.day
@@ -447,6 +506,41 @@ impl BengaliDate {
             .collect()
     }
 
+    /// Get the week day of the selected date
+    /// # Returns
+    /// * `Result<String>` - The week day of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the week day of the date
+    /// * The function will return "WeekDayError: Unknown week days" if the week day is invalid
+    pub fn get_week_day(&self) -> Result<String, WeekDayError> {
+        self.week_day.get_week_day()
+    }
+
+    /// Get the month of the selected date
+    /// # Returns
+    /// * `Result<String>` - The month of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the month of the date
+    /// * The function will return "MonthError: Unknown month" if the month is invalid
+    pub fn get_month(&self) -> Result<String, MonthError> {
+        self.month_name.get_month_name()
+    }
+
+    /// Get the year of the selected date
+    /// # Returns
+    /// * `Result<String>` - The year of the date
+    /// # Example
+    /// ```
+    /// ```
+    /// # Note
+    /// * The function will return the year of the date
+    /// * The function will return "DateError: Failed to convert number to character" if the year is invalid
     pub fn get_year(&self) -> Result<String, DateError> {
         let bengali_digits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
 
@@ -459,12 +553,17 @@ impl BengaliDate {
             })
             .collect()
     }
+}
 
-    pub fn get_week_day(&self) -> Result<String, WeekDayError> {
-        self.week_day.get_week_day()
-    }
-
-    pub fn get_month(&self) -> Result<String, MonthError> {
-        self.month_name.get_month_name()
+impl fmt::Display for BengaliDate {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{1}, {0} {2} {3}",
+            self.get_day().unwrap(),
+            self.get_week_day().unwrap(),
+            self.get_month().unwrap(),
+            self.get_year().unwrap()
+        )
     }
 }
