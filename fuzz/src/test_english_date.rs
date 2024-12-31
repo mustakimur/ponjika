@@ -29,7 +29,7 @@ fn convert_to_u8(s: Option<&&str>) -> u8 {
     }
 }
 
-fn test_english_date() {
+fn main() {
     fuzz!(|data: &[u8]| {
         if let Ok(s) = std::str::from_utf8(data) {
             let data: Vec<&str> = s.split_whitespace().collect();
@@ -72,8 +72,4 @@ fn test_english_date() {
             }
         }
     });
-}
-
-fn main() {
-    test_english_date();
 }

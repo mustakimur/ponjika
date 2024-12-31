@@ -10,6 +10,12 @@ Welcome to `Ponjika` and the year 2025. This crate will support many features re
 ## FAQ
 
 ## Fuzzing
+The project currently support afl.rs fuzzing. Take a look into `fuzz` directory. To run the fuzzer:
+```
+cd fuzz
+cargo afl build
+cargo afl fuzz -i in/english_create_date -o out/english_create_date target/debug/test_english_date
+```
 
 ## License
 This project is licensed under GPL-3.0.

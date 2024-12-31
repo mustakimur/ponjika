@@ -6,3 +6,11 @@ edition = "2021"
 [dependencies]
 afl = "*"
 ponjika = { path = "../" }
+
+[[bin]]
+name = "test_english_date"
+path = "src/test_english_date.rs"
+
+#[[bin]]
+#name = "test_bangla_date"
+#path = "src/test_bangla_date.rs"
