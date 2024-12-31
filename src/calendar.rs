@@ -23,16 +23,26 @@ fn is_leap_year(year: u16) -> bool {
 /// * `english_date` - EnglishDate
 /// # Returns
 /// * `Date` - Bengali date
-fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
+fn gregorian_to_bengali_date(english_date: EnglishDate) -> Result<Date, DateError> {
     let (english_day, english_month, english_year) = english_date.get_date();
 
     // The Bengali year starts from 14th April
     // If the English date is before 14th April, the Bengali year is the English year - 594
     // Otherwise, the Bengali year is the English year - 593
     let bengali_year: u16 = if english_month < 4 || (english_month == 4 && english_day < 14) {
-        english_year - 594
+        match english_year.checked_sub(594) {
+            Some(year) => year,
+            None => {
+                return Err(DateError::ArithmeticError);
+            }
+        }
     } else {
-        english_year - 593
+        match english_year.checked_sub(593) {
+            Some(year) => year,
+            None => {
+                return Err(DateError::ArithmeticError);
+            }
+        }
     };
 
     // get the Bengali day and month
@@ -113,7 +123,7 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
             (english_day - 15, 9)
         }
     } else {
-        unreachable!()
+        return Err(DateError::WrongDay);
     };
 
     let bengali_weekday =
@@ -125,8 +135,8 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Date {
         BengaliMonths::get_month(bengali_month).unwrap(),
         bengali_year,
     ) {
-        Ok(bengali_date) => Date::Bengali(bengali_date),
-        Err(_) => Date::Unknown,
+        Ok(bengali_date) => Ok(Date::Bengali(bengali_date)),
+        Err(err) => Err(err),
     }
 }
 
@@ -177,7 +187,10 @@ pub fn get_today_bengali_date() -> Result<Date, DateError> {
             let english_date = EnglishDate::create_date(today_day, month, today_year);
 
             match english_date {
-                Ok(date) => Ok(gregorian_to_bengali_date(date)),
+                Ok(date) => match gregorian_to_bengali_date(date) {
+                    Ok(bengali_date) => Ok(bengali_date),
+                    Err(err) => Err(err),
+                },
                 Err(err) => return Err(err),
             }
         }
@@ -216,6 +229,8 @@ pub fn get_today_bengali_date() -> Result<Date, DateError> {
 /// # Note
 /// * The function will return `DateError` if the conversion fails
 pub fn get_bengali_date_from_gregorian(english_date: EnglishDate) -> Result<Date, DateError> {
-    let bengali_date = gregorian_to_bengali_date(english_date);
-    Ok(bengali_date)
+    match gregorian_to_bengali_date(english_date) {
+        Ok(date) => Ok(date),
+        Err(err) => Err(err),
+    }
 }

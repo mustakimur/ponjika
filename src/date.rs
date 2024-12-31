@@ -31,6 +31,8 @@ pub enum DateError {
     NumToCharError,
     /// The CastingError variant is used when the casting failed.
     CastingError(TryFromIntError),
+    /// The ArithmeticError variant is used when the arithmetic operation failed.
+    ArithmeticError,
 }
 
 impl std::fmt::Display for DateError {
@@ -60,6 +62,7 @@ impl std::fmt::Display for DateError {
             DateError::CastingError(err) => {
                 write!(f, "DateError: Failed to cast the number: {}", err)
             }
+            DateError::ArithmeticError => write!(f, "DateError: Failed to perform arithmetic operation"),
         }
     }
 }

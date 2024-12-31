@@ -29,7 +29,7 @@ fn convert_to_u8(s: Option<&&str>) -> u8 {
     }
 }
 
-fn main() {
+fn test_english_date() {
     fuzz!(|data: &[u8]| {
         if let Ok(s) = std::str::from_utf8(data) {
             let data: Vec<&str> = s.split_whitespace().collect();
@@ -46,6 +46,19 @@ fn main() {
                     match date {
                         Ok(english_date) => {
                             println!("{:?}", english_date.to_string());
+                            let bengali_date = get_bengali_date_from_gregorian(english_date);
+                            match bengali_date {
+                                Ok(date) => {
+                                    println!("{}", date.to_string());
+                                }
+                                Err(convert_err) => {
+                                    eprintln!(
+                                        "Failed to convert to Bengali date: {:?}",
+                                        convert_err
+                                    );
+                                    return;
+                                }
+                            }
                         }
                         Err(err) => {
                             eprintln!("DateError: {:?}", err);
@@ -59,4 +72,8 @@ fn main() {
             }
         }
     });
+}
+
+fn main() {
+    test_english_date();
 }
