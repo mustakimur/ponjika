@@ -140,6 +140,109 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Result<Date, DateErro
     }
 }
 
+fn bengali_to_gregorian_date(bengali_date: BengaliDate) -> Result<Date, DateError> {
+    let (bengali_day, bengali_month, bengali_year) = bengali_date.get_date_number();
+
+    let english_year: u16 = if (bengali_month == 9 && bengali_day >= 17)
+        || (bengali_month == 12 && bengali_day <= 30)
+        || bengali_month == 10
+        || bengali_month == 11
+    {
+        bengali_year + 594
+    } else {
+        bengali_year + 593
+    };
+
+    let (english_date, english_month) = if bengali_month == 9 {
+        if bengali_day >= 17 {
+            (bengali_day - 16, 1)
+        } else {
+            (bengali_day + 15, 12)
+        }
+    } else if bengali_month == 10 {
+        if bengali_day >= 18 {
+            (bengali_day - 17, 2)
+        } else {
+            (bengali_day + 14, 1)
+        }
+    } else if bengali_month == 11 {
+        if is_leap_year(english_year) {
+            if bengali_day >= 17 {
+                (bengali_day - 16, 3)
+            } else {
+                (bengali_day + 13, 2)
+            }
+        } else {
+            if bengali_day >= 16 {
+                (bengali_day - 15, 3)
+            } else {
+                (bengali_day + 13, 2)
+            }
+        }
+    } else if bengali_month == 12 {
+        if bengali_day >= 18 {
+            (bengali_day - 17, 4)
+        } else {
+            (bengali_day + 14, 3)
+        }
+    } else if bengali_month == 1 {
+        if bengali_day >= 18 {
+            (bengali_day - 17, 5)
+        } else {
+            (bengali_day + 13, 4)
+        }
+    } else if bengali_month == 2 {
+        if bengali_day >= 18 {
+            (bengali_day - 17, 6)
+        } else {
+            (bengali_day + 14, 5)
+        }
+    } else if bengali_month == 3 {
+        if bengali_day >= 17 {
+            (bengali_day - 16, 7)
+        } else {
+            (bengali_day + 14, 6)
+        }
+    } else if bengali_month == 4 {
+        if bengali_day >= 17 {
+            (bengali_day - 16, 8)
+        } else {
+            (bengali_day + 15, 7)
+        }
+    } else if bengali_month == 5 {
+        if bengali_day >= 17 {
+            (bengali_day - 16, 9)
+        } else {
+            (bengali_day + 15, 8)
+        }
+    } else if bengali_month == 6 {
+        if bengali_day >= 16 {
+            (bengali_day - 15, 10)
+        } else {
+            (bengali_day + 15, 9)
+        }
+    } else if bengali_month == 7 {
+        if bengali_day >= 16 {
+            (bengali_day - 15, 11)
+        } else {
+            (bengali_day + 16, 10)
+        }
+    } else if bengali_month == 8 {
+        if bengali_day >= 16 {
+            (bengali_day - 15, 12)
+        } else {
+            (bengali_day + 15, 11)
+        }
+    } else {
+        return Err(DateError::WrongDay);
+    };
+
+    match EnglishDate::create_date(english_date, EnglishMonths::get_month(english_month).unwrap(), english_year) {
+        Ok(english_date) => Ok(Date::English(english_date)),
+        Err(err) => Err(err),
+    }
+}
+
 /// Get today's Bengali date
 /// # Returns
 /// * `Result<Date, DateError>` - Bengali date
@@ -230,6 +333,13 @@ pub fn get_today_bengali_date() -> Result<Date, DateError> {
 /// * The function will return `DateError` if the conversion fails
 pub fn get_bengali_date_from_gregorian(english_date: EnglishDate) -> Result<Date, DateError> {
     match gregorian_to_bengali_date(english_date) {
+        Ok(date) => Ok(date),
+        Err(err) => Err(err),
+    }
+}
+
+pub fn get_gregorian_date_from_bengali(bengali_date: BengaliDate) -> Result<Date, DateError> {
+    match bengali_to_gregorian_date(bengali_date) {
         Ok(date) => Ok(date),
         Err(err) => Err(err),
     }

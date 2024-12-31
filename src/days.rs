@@ -84,6 +84,7 @@ pub enum EnglishWeekDays {
     Thursday,
     Friday,
     Saturday,
+    UnImplemented
 }
 
 impl EnglishWeekDays {
@@ -107,6 +108,7 @@ impl EnglishWeekDays {
             EnglishWeekDays::Thursday => BengaliWeekDays::Brihoshpotibar,
             EnglishWeekDays::Friday => BengaliWeekDays::Shukrobar,
             EnglishWeekDays::Saturday => BengaliWeekDays::Shonibar,
+            EnglishWeekDays::UnImplemented => BengaliWeekDays::Robibar,
         }
     }
 
@@ -154,6 +156,7 @@ impl fmt::Display for EnglishWeekDays {
             EnglishWeekDays::Thursday => "Thursday",
             EnglishWeekDays::Friday => "Friday",
             EnglishWeekDays::Saturday => "Saturday",
+            EnglishWeekDays::UnImplemented => "unimplemented",
         };
         write!(f, "{}", day_str)
     }
@@ -170,6 +173,7 @@ pub enum BengaliWeekDays {
     Brihoshpotibar,
     Shukrobar,
     Shonibar,
+    UnImplemented,
 }
 
 impl BengaliWeekDays {
@@ -193,6 +197,7 @@ impl BengaliWeekDays {
             BengaliWeekDays::Brihoshpotibar => EnglishWeekDays::Thursday,
             BengaliWeekDays::Shukrobar => EnglishWeekDays::Friday,
             BengaliWeekDays::Shonibar => EnglishWeekDays::Saturday,
+            BengaliWeekDays::UnImplemented => EnglishWeekDays::UnImplemented,
         }
     }
 
@@ -240,6 +245,7 @@ impl fmt::Display for BengaliWeekDays {
             BengaliWeekDays::Brihoshpotibar => "বৃহস্পতিবার",
             BengaliWeekDays::Shukrobar => "শুক্রবার",
             BengaliWeekDays::Shonibar => "শনিবার",
+            BengaliWeekDays::UnImplemented => "unimplemented",
         };
         write!(f, "{}", day_str)
     }

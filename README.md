@@ -8,6 +8,12 @@
 Welcome to `Ponjika` and the year 2025. This crate will support many features relevant to the Bengali (Bangladeshi) calendar. Our goal is to minimize external resource dependency and safely compute Bengali dates, seasons, holidays, etc. If you have a feature idea that aligns with the crate's purpose, please create an issue with the tag `[Feature]` in the issue title. If you have found a bug, please create an issue with the tag `[Bug]` in the issue title.
 
 ## FAQ
+*Q1: Can I create a Gregorian date and convert it to a Bengali date?*
+- First, you have to create an `EnglishDate`. For example: `let date = EnglishDate::create_date(30, EnglishMonths::November, 2010);`
+- Finally, if your date is valid, you can get the respective Bengali date using: `let bengali_date = get_bengali_date_from_gregorian(english_date);`
+- In both steps, the crate may return `DateError` for many different reasons including invalid date, arithmetic operation, casting, etc. So, make sure you do handle all the possible error cases.
+- Example: `examples/gregorianToBengali.rs`.
+
 
 ## Fuzzing
 The project currently support afl.rs fuzzing. Take a look into `fuzz` directory. To run the fuzzer:

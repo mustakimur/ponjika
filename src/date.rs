@@ -535,31 +535,17 @@ impl BengaliDate {
             Err(_) => return Err(DateError::UnknownDate),
         }
 
-        let week_day = match year {
-            0..=8568 => {
-                let date = Utc
-                    .with_ymd_and_hms(year as i32, month_index as u32, day as u32, 0, 0, 0)
-                    .unwrap();
-                match date.weekday() {
-                    Weekday::Mon => WeekDays::Bengali(BengaliWeekDays::Sombar),
-                    Weekday::Tue => WeekDays::Bengali(BengaliWeekDays::Mongolbar),
-                    Weekday::Wed => WeekDays::Bengali(BengaliWeekDays::Budhbar),
-                    Weekday::Thu => WeekDays::Bengali(BengaliWeekDays::Brihoshpotibar),
-                    Weekday::Fri => WeekDays::Bengali(BengaliWeekDays::Shukrobar),
-                    Weekday::Sat => WeekDays::Bengali(BengaliWeekDays::Shonibar),
-                    Weekday::Sun => WeekDays::Bengali(BengaliWeekDays::Robibar),
-                }
-            }
-            _ => return Err(DateError::WrongWeekDay(WeekDayError::FailedDateTimes)),
-        };
-
         Ok(BengaliDate {
             day,
-            week_day,
+            week_day: WeekDays::Bengali(BengaliWeekDays::UnImplemented),
             month: month_index,
             month_name: Month::Bengali(month),
             year,
         })
+    }
+
+    pub fn get_date_number(&self) -> (u8, u8, u16) {
+        (self.day, self.month, self.year)
     }
 
     /// Get the day of the selected date
