@@ -11,7 +11,7 @@ use chrono::{Datelike, TimeZone, Utc, Weekday};
 
 use crate::days::{BengaliWeekDays, EnglishWeekDays, WeekDayError, WeekDays};
 use crate::months::{BengaliMonths, EnglishMonths, Month};
-use crate::MonthError;
+use crate::{get_gregorian_date_from_bengali, MonthError};
 
 /// # `DateError`: The error enum for the dates.
 /// The enum variant is the error message.
@@ -62,7 +62,9 @@ impl std::fmt::Display for DateError {
             DateError::CastingError(err) => {
                 write!(f, "DateError: Failed to cast the number: {}", err)
             }
-            DateError::ArithmeticError => write!(f, "DateError: Failed to perform arithmetic operation"),
+            DateError::ArithmeticError => {
+                write!(f, "DateError: Failed to perform arithmetic operation")
+            }
         }
     }
 }
@@ -392,14 +394,24 @@ impl fmt::Display for EnglishDate {
     /// ```
     /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{1}, {0} {2} {3}",
-            self.get_day(),
-            self.get_week_day().unwrap(),
-            self.get_month().unwrap(),
-            self.get_year()
-        )
+        if self.week_day == WeekDays::English(EnglishWeekDays::UnImplemented) {
+            write!(
+                f,
+                "{0} {1} {2}",
+                self.get_day(),
+                self.get_month().unwrap(),
+                self.get_year()
+            )
+        } else {
+            write!(
+                f,
+                "{1}, {0} {2} {3}",
+                self.get_day(),
+                self.get_week_day().unwrap(),
+                self.get_month().unwrap(),
+                self.get_year()
+            )
+        }
     }
 }
 
@@ -626,13 +638,23 @@ impl fmt::Display for BengaliDate {
     /// ```
     /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{1}, {0} {2} {3}",
-            self.get_day().unwrap(),
-            self.get_week_day().unwrap(),
-            self.get_month().unwrap(),
-            self.get_year().unwrap()
-        )
+        if self.week_day == WeekDays::Bengali(BengaliWeekDays::UnImplemented) {
+            write!(
+                f,
+                "{0} {1} {2}",
+                self.get_day().unwrap(),
+                self.get_month().unwrap(),
+                self.get_year().unwrap()
+            )
+        } else {
+            write!(
+                f,
+                "{1}, {0} {2} {3}",
+                self.get_day().unwrap(),
+                self.get_week_day().unwrap(),
+                self.get_month().unwrap(),
+                self.get_year().unwrap()
+            )
+        }
     }
 }

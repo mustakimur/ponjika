@@ -148,9 +148,15 @@ fn bengali_to_gregorian_date(bengali_date: BengaliDate) -> Result<Date, DateErro
         || bengali_month == 10
         || bengali_month == 11
     {
-        bengali_year + 594
+        match bengali_year.checked_add(594) {
+            Some(year) => year,
+            None => return Err(DateError::ArithmeticError),
+        }
     } else {
-        bengali_year + 593
+        match bengali_year.checked_add(593) {
+            Some(year) => year,
+            None => return Err(DateError::ArithmeticError),
+        }
     };
 
     let (english_date, english_month) = if bengali_month == 9 {
@@ -237,7 +243,11 @@ fn bengali_to_gregorian_date(bengali_date: BengaliDate) -> Result<Date, DateErro
         return Err(DateError::WrongDay);
     };
 
-    match EnglishDate::create_date(english_date, EnglishMonths::get_month(english_month).unwrap(), english_year) {
+    match EnglishDate::create_date(
+        english_date,
+        EnglishMonths::get_month(english_month).unwrap(),
+        english_year,
+    ) {
         Ok(english_date) => Ok(Date::English(english_date)),
         Err(err) => Err(err),
     }
@@ -338,6 +348,34 @@ pub fn get_bengali_date_from_gregorian(english_date: EnglishDate) -> Result<Date
     }
 }
 
+/// Get Gregorian date from Bengali date
+/// # Arguments
+/// * `bengali_date` - BengaliDate
+/// # Returns
+/// * `Result<Date, DateError>` - Gregorian date
+/// # Example
+/// ```
+/// use ponjika::{calendar, BengaliDate, BengaliMonths};
+/// let bengali_date = BengaliDate::create_date(3, BengaliMonths::Falgun, 1430);
+/// match bengali_date {
+///   Ok(bengali_date) => {
+///     let gregorian_date = calendar::get_gregorian_date_from_bengali(bengali_date);
+///     match gregorian_date {
+///       Ok(date) => {
+///         println!("Gregorian Date: {}", date.to_string());
+///       }
+///       Err(_) => {
+///         eprintln!("Failed to convert to Gregorian date");
+///       }
+///     }
+///   }
+///   Err(_) => {
+///     eprintln!("The date is not a valid Bengali date");
+///   }
+/// }
+/// ```
+/// # Note
+/// * The function will return `DateError` if the conversion fails
 pub fn get_gregorian_date_from_bengali(bengali_date: BengaliDate) -> Result<Date, DateError> {
     match bengali_to_gregorian_date(bengali_date) {
         Ok(date) => Ok(date),

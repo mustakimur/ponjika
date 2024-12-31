@@ -8,7 +8,7 @@ use std::fmt;
 
 /// # `WeekDayError`: The error enum for the week days.
 /// The enum variants are the error messages for the week days.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum WeekDayError {
     /// The UnknownWeekDays variant is used when the week day is neither English nor Bengali.
     UnknownWeekDays,
@@ -39,7 +39,7 @@ type Result<T> = std::result::Result<T, WeekDayError>;
 
 /// # `WeekDays`: The enum for the week days.
 /// The enum variants are the English and Bengali week days.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum WeekDays {
     /// The English variant is used to represent the English week days.
     English(EnglishWeekDays),
@@ -75,7 +75,7 @@ impl WeekDays {
 
 /// # `EnglishWeekDays`: The enum for the English week days.
 /// The enum variants are the English week days.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum EnglishWeekDays {
     Sunday,
     Monday,
@@ -108,7 +108,7 @@ impl EnglishWeekDays {
             EnglishWeekDays::Thursday => BengaliWeekDays::Brihoshpotibar,
             EnglishWeekDays::Friday => BengaliWeekDays::Shukrobar,
             EnglishWeekDays::Saturday => BengaliWeekDays::Shonibar,
-            EnglishWeekDays::UnImplemented => BengaliWeekDays::Robibar,
+            EnglishWeekDays::UnImplemented => BengaliWeekDays::UnImplemented,
         }
     }
 
@@ -164,7 +164,7 @@ impl fmt::Display for EnglishWeekDays {
 
 /// # `BengaliWeekDays`: The enum for the Bengali week days.
 /// The enum variants are the Bengali week days.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum BengaliWeekDays {
     Robibar,
     Sombar,

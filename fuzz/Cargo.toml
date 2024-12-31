@@ -11,6 +11,7 @@ ponjika = { path = "../" }
 name = "test_english_date"
 path = "src/test_english_date.rs"
 
-#[[bin]]
-#name = "test_bangla_date"
-#path = "src/test_bangla_date.rs"
+[[bin]]
+name = "test_bengali_date"
+path = "src/test_bengali_date.rs"
+
