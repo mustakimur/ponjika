@@ -141,7 +141,7 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Result<Date, DateErro
 }
 
 fn bengali_to_gregorian_date(bengali_date: BengaliDate) -> Result<Date, DateError> {
-    let (bengali_day, bengali_month, bengali_year) = bengali_date.get_date_number();
+    let (bengali_day, bengali_month, bengali_year) = bengali_date.get_date();
 
     let english_year: u16 = if (bengali_month == 9 && bengali_day >= 17)
         || (bengali_month == 12 && bengali_day <= 30)

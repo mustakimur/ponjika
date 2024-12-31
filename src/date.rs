@@ -11,7 +11,7 @@ use chrono::{Datelike, TimeZone, Utc, Weekday};
 
 use crate::days::{BengaliWeekDays, EnglishWeekDays, WeekDayError, WeekDays};
 use crate::months::{BengaliMonths, EnglishMonths, Month};
-use crate::{get_gregorian_date_from_bengali, MonthError};
+use crate::MonthError;
 
 /// # `DateError`: The error enum for the dates.
 /// The enum variant is the error message.
@@ -89,6 +89,13 @@ impl Date {
     /// * `Option<EnglishDate>` - The English date
     /// # Example
     /// ```
+    /// use ponjika::date::Date;
+    /// use ponjika::date::EnglishDate;
+    /// use ponjika::months::EnglishMonths;
+    /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021).unwrap();
+    /// let date = Date::English(date);
+    /// let english_date = date.get_english_date().unwrap();
+    /// assert_eq!(english_date.get_date(), (1, 1, 2021));
     /// ```
     /// # Note
     /// * The function will return the English date
@@ -105,6 +112,13 @@ impl Date {
     /// * `Option<BengaliDate>` - The Bengali date
     /// # Example
     /// ```
+    /// use ponjika::date::Date;
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// let date = BengaliDate::create_date(1, BengaliMonths::Baishakh, 1428).unwrap();
+    /// let date = Date::Bengali(date);
+    /// let bengali_date = date.get_bengali_date().unwrap();
+    /// assert_eq!(bengali_date.get_day().unwrap(), "১");
     /// ```
     /// # Note
     /// * The function will return the Bengali date
@@ -121,6 +135,12 @@ impl Date {
     /// * `String` - The day of the date
     /// # Example
     /// ```
+    /// use ponjika::date::Date;
+    /// use ponjika::date::EnglishDate;
+    /// use ponjika::months::EnglishMonths;
+    /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021).unwrap();
+    /// let date = Date::English(date);
+    /// println!("{:?}", date.get_date());
     /// ```
     /// # Note
     /// * The function will return the day of the date
@@ -128,7 +148,7 @@ impl Date {
     pub fn get_date(&self) -> DateResult {
         match self {
             Date::English(date) => Ok((
-                date.get_day(),
+                date.day.to_string(),
                 match date.get_week_day() {
                     Ok(week_day) => week_day,
                     Err(err) => return Err(DateError::WrongWeekDay(err)),
@@ -137,7 +157,7 @@ impl Date {
                     Ok(month) => month,
                     Err(err) => return Err(DateError::WrongMonth(err)),
                 },
-                date.get_year(),
+                date.year.to_string(),
             )),
             Date::Bengali(date) => Ok((
                 match date.get_day() {
@@ -168,24 +188,30 @@ impl fmt::Display for Date {
     /// * `fmt::Result` - The date
     /// # Example
     /// ```
+    /// use ponjika::date::Date;
+    /// use ponjika::date::EnglishDate;
+    /// use ponjika::months::EnglishMonths;
+    /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021).unwrap();
+    /// let date = Date::English(date);
+    /// println!("{}", date.to_string());
     /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Date::English(date) => write!(
                 f,
                 "{1}, {0} {2} {3}",
-                date.get_day(),
+                date.day,
                 date.get_week_day().unwrap(),
                 date.get_month().unwrap(),
-                date.get_year()
+                date.year
             ),
             Date::Bengali(date) => write!(
                 f,
                 "{1}, {0} {2} {3}",
-                date.get_day().unwrap(),
+                date.day,
                 date.get_week_day().unwrap(),
                 date.get_month().unwrap(),
-                date.get_year().unwrap()
+                date.year
             ),
             Date::Unknown => write!(f, "Unknown date"),
         }
@@ -204,19 +230,6 @@ pub struct EnglishDate {
 }
 
 impl EnglishDate {
-    /// Check if the date is valid
-    /// # Arguments
-    /// * `day` - u8
-    /// * `month` - u8
-    /// * `year` - u16
-    /// # Returns
-    /// * `Result<bool>` - The result of the date validation
-    /// # Example
-    /// ```
-    /// ```
-    /// # Note
-    /// * The function will return `Ok(true)` if the date is valid
-    /// * The function will return `Err(DateError)` if the date is invalid
     fn is_valid_date(day: u8, month: u8, year: u16) -> Result<bool, DateError> {
         if day < 1 || day > 31 {
             return Err(DateError::WrongDay);
@@ -272,6 +285,7 @@ impl EnglishDate {
     /// use ponjika::date::EnglishDate;
     /// use ponjika::months::EnglishMonths;
     /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021);
+    /// println!("{:?}", date);
     /// ```
     /// # Note
     /// * The function will return the English date
@@ -328,23 +342,16 @@ impl EnglishDate {
     /// * `(u8, u8, u16)` - The day, month, and year of the date
     /// # Example
     /// ```
+    /// use ponjika::date::EnglishDate;
+    /// use ponjika::months::EnglishMonths;
+    /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021).unwrap();
+    /// let date = date.get_date();
+    /// assert_eq!(date, (1, 1, 2021));
     /// ```
     /// # Note
     /// * The function will return the day, month, and year of the date
     pub fn get_date(&self) -> (u8, u8, u16) {
         (self.day, self.month, self.year)
-    }
-
-    /// Get the day of the selected date
-    /// # Returns
-    /// * `String` - The day of the date
-    /// # Example
-    /// ```
-    /// ```
-    /// # Note
-    /// * The function will return the day of the date
-    pub fn get_day(&self) -> String {
-        self.day.to_string()
     }
 
     /// Get the week day of the selected date
@@ -372,18 +379,6 @@ impl EnglishDate {
     pub fn get_month(&self) -> Result<String, MonthError> {
         self.month_name.get_month_name()
     }
-
-    /// Get the year of the selected date
-    /// # Returns
-    /// * `String` - The year of the date
-    /// # Example
-    /// ```
-    /// ```
-    /// # Note
-    /// * The function will return the year of the date
-    pub fn get_year(&self) -> String {
-        self.year.to_string()
-    }
 }
 
 impl fmt::Display for EnglishDate {
@@ -392,24 +387,28 @@ impl fmt::Display for EnglishDate {
     /// * `fmt::Result` - The date
     /// # Example
     /// ```
+    /// use ponjika::date::EnglishDate;
+    /// use ponjika::months::EnglishMonths;
+    /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021).unwrap();
+    /// println!("{}", date.to_string());
     /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.week_day == WeekDays::English(EnglishWeekDays::UnImplemented) {
             write!(
                 f,
                 "{0} {1} {2}",
-                self.get_day(),
+                self.day,
                 self.get_month().unwrap(),
-                self.get_year()
+                self.year
             )
         } else {
             write!(
                 f,
                 "{1}, {0} {2} {3}",
-                self.get_day(),
+                self.day,
                 self.get_week_day().unwrap(),
                 self.get_month().unwrap(),
-                self.get_year()
+                self.year
             )
         }
     }
@@ -427,19 +426,6 @@ pub struct BengaliDate {
 }
 
 impl BengaliDate {
-    /// Check if the date is valid
-    /// # Arguments
-    /// * `day` - u8
-    /// * `month` - u8
-    /// * `year` - u16
-    /// # Returns
-    /// * `Result<bool>` - The result of the date validation
-    /// # Example
-    /// ```
-    /// ```
-    /// # Note
-    /// * The function will return `Ok(true)` if the date is valid
-    /// * The function will return `Err(DateError)` if the date is invalid
     fn is_valid_date(day: u8, month: u8, year: u16) -> Result<bool, DateError> {
         if day < 1 || day > 31 {
             return Err(DateError::WrongDay);
@@ -494,6 +480,11 @@ impl BengaliDate {
     /// * `Date` - The Bengali date
     /// # Example
     /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// use ponjika::days::BengaliWeekDays;
+    /// let date = BengaliDate::create_date_with_weekday(1, BengaliWeekDays::Shonibar, BengaliMonths::Baishakh, 1428);
+    /// println!("{:?}", date);
     /// ```
     /// # Note
     /// * The function will return the Bengali date
@@ -532,6 +523,10 @@ impl BengaliDate {
     /// * `Date` - The Bengali date
     /// # Example
     /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// let date = BengaliDate::create_date(1, BengaliMonths::Baishakh, 1428);
+    /// println!("{:?}", date);
     /// ```
     /// # Note
     /// * The function will return the Bengali date
@@ -556,7 +551,18 @@ impl BengaliDate {
         })
     }
 
-    pub fn get_date_number(&self) -> (u8, u8, u16) {
+    /// Get the date in numbers of the selected date
+    /// # Returns
+    /// * `(u8, u8, u16)` - The day, month, and year of the date
+    /// # Example
+    /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// let date = BengaliDate::create_date(1, BengaliMonths::Baishakh, 1428).unwrap();
+    /// let date = date.get_date();
+    /// assert_eq!(date, (1, 1, 1428));
+    /// ```
+    pub fn get_date(&self) -> (u8, u8, u16) {
         (self.day, self.month, self.year)
     }
 
@@ -565,6 +571,11 @@ impl BengaliDate {
     /// * `Result<String>` - The day of the date
     /// # Example
     /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// let date = BengaliDate::create_date(1, BengaliMonths::Baishakh, 1428).unwrap();
+    /// let day = date.get_day();
+    /// assert_eq!(day.unwrap(), "১");
     /// ```
     /// # Note
     /// * The function will return the day of the date
@@ -586,6 +597,14 @@ impl BengaliDate {
     /// * `Result<String>` - The week day of the date
     /// # Example
     /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// let date = BengaliDate::create_date(1, BengaliMonths::Baishakh, 1428).unwrap();
+    /// let week_day = date.get_week_day();
+    /// match week_day {
+    ///    Ok(week_day) => println!("{}", week_day),
+    ///    Err(err) => println!("{}", err),
+    /// }
     /// ```
     /// # Note
     /// * The function will return the week day of the date
@@ -599,6 +618,11 @@ impl BengaliDate {
     /// * `Result<String>` - The month of the date
     /// # Example
     /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// let date = BengaliDate::create_date(1, BengaliMonths::Baishakh, 1428).unwrap();
+    /// let month = date.get_month();
+    /// assert_eq!(month.unwrap(), "বৈশাখ");
     /// ```
     /// # Note
     /// * The function will return the month of the date
@@ -612,6 +636,11 @@ impl BengaliDate {
     /// * `Result<String>` - The year of the date
     /// # Example
     /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// let date = BengaliDate::create_date(1, BengaliMonths::Baishakh, 1428).unwrap();
+    /// let year = date.get_year();
+    /// assert_eq!(year.unwrap(), "১৪২৮");
     /// ```
     /// # Note
     /// * The function will return the year of the date
@@ -636,6 +665,10 @@ impl fmt::Display for BengaliDate {
     /// * `fmt::Result` - The date
     /// # Example
     /// ```
+    /// use ponjika::date::BengaliDate;
+    /// use ponjika::months::BengaliMonths;
+    /// let date = BengaliDate::create_date(1, BengaliMonths::Baishakh, 1428).unwrap();
+    /// println!("{}", date.to_string());
     /// ```
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.week_day == WeekDays::Bengali(BengaliWeekDays::UnImplemented) {

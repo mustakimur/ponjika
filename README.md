@@ -26,6 +26,7 @@ The project currently support afl.rs fuzzing. Take a look into `fuzz` directory.
 cd fuzz
 cargo afl build
 cargo afl fuzz -i in/english_create_date -o out/english_create_date target/debug/test_english_date
+cargo afl fuzz -i in/bengali_create_date -o out/bengali_create_date target/debug/test_bengali_date
 ```
 
 ## License
