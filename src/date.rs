@@ -359,6 +359,11 @@ impl EnglishDate {
     /// * `String` - The week day of the date
     /// # Example
     /// ```
+    /// use ponjika::date::EnglishDate;
+    /// use ponjika::months::EnglishMonths;
+    /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021).unwrap();
+    /// let week_day = date.get_week_day();
+    /// assert_eq!(week_day.unwrap(), "Friday");
     /// ```
     /// # Note
     /// * The function will return the week day of the date
@@ -372,6 +377,11 @@ impl EnglishDate {
     /// * `String` - The month of the date
     /// # Example
     /// ```
+    /// use ponjika::date::EnglishDate;
+    /// use ponjika::months::EnglishMonths;
+    /// let date = EnglishDate::create_date(1, EnglishMonths::January, 2021).unwrap();
+    /// let month = date.get_month();
+    /// assert_eq!(month.unwrap(), "January");
     /// ```
     /// # Note
     /// * The function will return the month of the date

@@ -9,11 +9,6 @@ use crate::{
     BengaliDate, BengaliMonths, BengaliWeekDays, Date, DateError, EnglishDate, EnglishMonths,
 };
 
-/// checks if the year is a leap year
-/// # Arguments
-/// * `year` - u16
-/// # Returns
-/// * `bool` - true if the year is a leap year
 fn is_leap_year(year: u16) -> bool {
     year % 4 == 0
 }
@@ -23,6 +18,8 @@ fn is_leap_year(year: u16) -> bool {
 /// * `english_date` - EnglishDate
 /// # Returns
 /// * `Date` - Bengali date
+/// # Note
+/// * The function will return `DateError` if the conversion fails
 fn gregorian_to_bengali_date(english_date: EnglishDate) -> Result<Date, DateError> {
     let (english_day, english_month, english_year) = english_date.get_date();
 
@@ -140,6 +137,13 @@ fn gregorian_to_bengali_date(english_date: EnglishDate) -> Result<Date, DateErro
     }
 }
 
+/// converts Bengali date to Gregorian date
+/// # Arguments
+/// * `bengali_date` - BengaliDate
+/// # Returns
+/// * `Date` - Gregorian date
+/// # Note
+/// * The function will return `DateError` if the conversion fails
 fn bengali_to_gregorian_date(bengali_date: BengaliDate) -> Result<Date, DateError> {
     let (bengali_day, bengali_month, bengali_year) = bengali_date.get_date();
 

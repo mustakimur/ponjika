@@ -84,7 +84,7 @@ pub enum EnglishWeekDays {
     Thursday,
     Friday,
     Saturday,
-    UnImplemented
+    UnImplemented,
 }
 
 impl EnglishWeekDays {
@@ -119,6 +119,9 @@ impl EnglishWeekDays {
     /// * `EnglishWeekDays` - The English week day
     /// # Example
     /// ```
+    /// use ponjika::days::EnglishWeekDays;
+    /// let week_day = "রবিবার";
+    /// println!("{:?}", EnglishWeekDays::get_english_weekday(week_day));
     /// ```
     /// # Note
     /// * The function will return the English week day
@@ -208,6 +211,9 @@ impl BengaliWeekDays {
     /// * `BengaliWeekDays` - The Bengali week day
     /// # Example
     /// ```
+    /// use ponjika::days::BengaliWeekDays;
+    /// let week_day = "Sunday";
+    /// println!("{:?}", BengaliWeekDays::get_english_weekday(week_day));
     /// ```
     /// # Note
     /// * The function will return the Bengali week day

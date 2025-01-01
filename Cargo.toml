@@ -1,6 +1,6 @@
 [package]
 name = "ponjika"
-version = "0.1.3"
+version = "0.2.0"
 edition = "2021"
 description = "Ponjika is a Bangla calendar library for Rust."
 license = "GPL-3.0"
