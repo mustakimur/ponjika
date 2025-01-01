@@ -1,1 +1,4 @@
-ponjika/target/*
+target/*
+examples/samples.rs
+fuzz/out/*
+fuzz/target/*
